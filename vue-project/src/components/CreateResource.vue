@@ -221,6 +221,20 @@ export default {
       if(this.data_obj.rn != '') acp_obj['m2m:acp'].rn = this.data_obj.rn
       acp_obj['m2m:acp'].pv.acr = JSON.parse(this.data_obj.pv_acr)
       acp_obj['m2m:acp'].pvs.acr = JSON.parse(this.data_obj.pvs_acr)
+
+      this.data_obj['Content-Type'] = 'application/json;ty=1'
+      this.data_obj['Body'] = acp_obj
+
+      let headers = {}
+      headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
+      headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
+      headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
+      headers['Content-Type'] = this.data_obj['Content-Type']
+      headers['Accept'] = this.data_obj.Accept
+
+      this.req_display_obj = acp_obj
+      this.request_header_change(headers)
+      return (this.request_text = JSON.stringify(this.req_display_obj, undefined, 2))
     },
     createGRP(){
       let grp_obj = {}
@@ -230,6 +244,20 @@ export default {
       if(this.data_obj.mnm != '') grp_obj['m2m:grp'].mnm = this.data_obj.mnm
       if(this.data_obj.mt != '') grp_obj['m2m:grp'].mt = this.data_obj.mt
       if(this.data_obj.csy != '') grp_obj['m2m:grp'].csy = this.data_obj.csy
+
+      this.data_obj['Content-Type'] = 'application/json;ty=9'
+      this.data_obj['Body'] = grp_obj
+
+      let headers = {}
+      headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
+      headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
+      headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
+      headers['Content-Type'] = this.data_obj['Content-Type']
+      headers['Accept'] = this.data_obj.Accept
+
+      this.req_display_obj = grp_obj
+      this.request_header_change(headers)
+      return (this.request_text = JSON.stringify(this.req_display_obj, undefined, 2))
     },
     post_request() {
       let url =
