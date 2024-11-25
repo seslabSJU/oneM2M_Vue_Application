@@ -10,7 +10,7 @@ export default {
         Res_Id: 'TinyIoT',
         X_M2M_RI: '12345',
         X_M2M_RVI: '2a',
-        X_M2M_Origin: 'S',
+        X_M2M_Origin: 'CAdmin',
         Accept: 'application/json',
 
         lbl: '',
@@ -30,6 +30,12 @@ export default {
         cb: '',
         csi: '',
         srv: ['1', '2', '2a'],
+        pv_acr: [],
+        pvs_acr: [],
+        mid: [],
+        mnm: '',
+        mt: '',
+        csy: '',
       },
       req_fields: [
         { key: 'X-M2M-RI', class: 'text-center' },
@@ -205,6 +211,73 @@ export default {
       this.req_display_obj = csr_obj
       this.request_header_change(headers)
       return (this.request_text = JSON.stringify(this.req_display_obj, undefined, 2))
+    },
+    createACP(){
+      let acp_obj = {}
+
+      acp_obj['m2m:acp'] = {}
+      acp_obj['m2m:acp'].pv = {}
+      acp_obj['m2m:acp'].pvs = {}
+      if(this.data_obj.rn != '') acp_obj['m2m:acp'].rn = this.data_obj.rn
+      acp_obj['m2m:acp'].pv.acr = JSON.parse(this.data_obj.pv_acr)
+      acp_obj['m2m:acp'].pvs.acr = JSON.parse(this.data_obj.pvs_acr)
+    },
+    createGRP(){
+      let grp_obj = {}
+      grp_obj['m2m:grp'] = {}
+      if(this.data_obj.rn != '') grp_obj['m2m:grp'].rn = this.data_obj.rn
+      if(this.data_obj.mid.length > 0) grp_obj['m2m:grp'].mid = JSON.parse(this.data_obj.mid)
+      if(this.data_obj.mnm != '') grp_obj['m2m:grp'].mnm = this.data_obj.mnm
+      if(this.data_obj.mt != '') grp_obj['m2m:grp'].mt = this.data_obj.mt
+      if(this.data_obj.csy != '') grp_obj['m2m:grp'].csy = this.data_obj.csy
+    },
+    post_request() {
+      let url =
+        "http://" + this.data_obj.Platform_addr + "/" + this.data_obj.Res_Id;
+      const headers = {};
+      headers["X-M2M-RI"] = this.data_obj.X_M2M_RI;
+      headers["X-M2M-Origin"] = this.data_obj.X_M2M_Origin;
+      headers["X-M2M-RVI"] = "2a";
+      headers["Content-Type"] = this.data_obj["Content-Type"];
+      headers["Accept"] = this.data_obj.Accept;
+
+      let body = this.data_obj.body;
+      axios
+        .post(url, body, { headers })
+        .then((response) => {
+          this.res_mess = response.data;
+          this.res_status = response.status;
+          let headers = {};
+          headers["X-M2M-RI"] = response.headers["x-m2m-ri"];
+          headers["X-M2M-RSC"] = response.headers["x-m2m-rsc"];
+          headers["X-M2M-RVI"] = response.headers["x-m2m-rvi"];
+          headers["Content-Length"] = response.headers["content-length"];
+          headers["Content-Type"] = response.headers["content-type"];
+          this.response_header_change(headers);
+
+          return (this.response_text = JSON.stringify(
+            this.res_mess,
+            undefined,
+            2
+          ));
+        })
+        .catch((error) => {
+          this.res_errmess = error.response.data;
+          if (error.response.status === 409) {
+            this.res_status = error.response.status;
+          } else if (error.response.status === 404) {
+            this.res_status = error.response.status;
+          }
+          let headers = {};
+          headers["X-M2M-RI"] = error.response.headers["x-m2m-ri"];
+          headers["X-M2M-RSC"] = error.response.headers["x-m2m-rsc"];
+          headers["X-M2M-RVI"] = error.response.headers["x-m2m-rvi"];
+          headers["Content-Length"] = error.response.headers["content-length"];
+          headers["Content-Type"] = error.response.headers["content-type"];
+          this.response_header_change(headers);
+
+          return (this.response_text = this.res_errmess);
+        });
     },
   },
 }
