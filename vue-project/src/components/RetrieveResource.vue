@@ -79,7 +79,7 @@ export default {
       return (this.request_text = JSON.stringify(ret_obj, undefined, 2));
     },
     retrieveRequest(){
-      let url = "http://" + this.data_obj.Platform_addr + "/" + this.data_obj.Res_Id + this.query_Params;
+      let url = "http://" + this.data_obj.Platform_addr + "/" + this.data_obj.Res_Id + "/" + this.query_Params;
 
       const headers = {};
       headers["X-M2M-RI"] = this.data_obj.X_M2M_RI;
