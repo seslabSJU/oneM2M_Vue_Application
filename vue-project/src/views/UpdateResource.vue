@@ -1,3 +1,22 @@
+<template>
+  <div>
+    <h2>Update Resource</h2>
+    <form @submit.prevent="handleUpdate">
+      <div>
+        <label>Resource Name:</label>
+        <input type="text" v-model="resourceName" />
+      </div>
+      <div>
+        <label>New Label:</label>
+        <input type="text" v-model="newLabel" />
+      </div>
+      <button type="submit">Update</button>
+    </form>
+    <p v-if="response">{{ response }}</p>
+  </div>
+</template>
+
+
 <script>
 import axios from 'axios'
 

@@ -1,26 +1,66 @@
+<template>
+  <div>
+    <h2>Delete Resource</h2>
+    <form @submit.prevent="handleDelete">
+      <div>
+        <label>Resource Name:</label>
+        <input type="text" v-model="resourceName" />
+      </div>
+      <button type="submit">Delete</button>
+    </form>
+    <p v-if="response">{{ response }}</p>
+  </div>
+</template>
+
+
 <script>
 import axios from 'axios'
 
 export default {
   data() {
     return {
+      res_name: '',
       data_obj: {
         Platform_addr: '127.0.0.1:3000',
         Res_Id: 'TinyIoT',
-        X_M2M_RI: "12345",
-        X_M2M_RVI: "2a",
-        X_M2M_Origin: "CAdmin",
-        Accept: "application/json",
-        Retrieve_text: "GET",
+        X_M2M_RI: '12345',
+        X_M2M_RVI: '2a',
+        X_M2M_Origin: 'CAdmin',
+        Accept: 'application/json',
+
+        lbl: '',
+        mni: '',
+        mbs: '',
+        ty: '',
+        op: '',
+        api: '',
+        rr: true,
+        con: '',
+        rn: '',
+        nu: '',
+        enc: '',
+        exc: '10',
+        net: [3, 4],
+        poa: [],
+        cb: '',
+        csi: '',
+        srv: ['1', '2', '2a'],
+        pv_acr: [],
+        pvs_acr: [],
+        mid: [],
+        mnm: '',
+        mt: '',
+        csy: '',
       },
       req_fields: [
         { key: 'X-M2M-RI', class: 'text-center' },
         { key: 'X-M2M-Origin', class: 'text-center' },
         { key: 'X-M2M-RVI', class: 'text-center' },
+        { key: 'Content-Type', class: 'text-center' },
         { key: 'Accept', class: 'text-center' },
       ],
       req_items: [
-        { 'X-M2M-RI': '', 'X-M2M-Origin': '', 'X-M2M-RVI': '', Accept: '' },
+        { 'X-M2M-RI': '', 'X-M2M-Origin': '', 'X-M2M-RVI': '', 'Content-Type': '', Accept: '' },
       ],
       res_fields: [
         { key: 'X-M2M-RI', class: 'text-center' },
@@ -31,64 +71,33 @@ export default {
       ],
       res_items: [
         {
-          "X-M2M-RI": "",
-          "X-M2M-RSC": "",
-          "X-M2M-RVI": "",
-          "Content-Length": "",
-          "Content-Type": "",
+          'X-M2M-RI': '',
+          'X-M2M-RSC': '',
+          'X-M2M-RVI': '',
+          'Content-Length': '',
+          'Content-Type': '',
         },
       ],
-      query_Params: "",
-      request_text: "",
-      response_text: "",
-      res_name: "",
-      res_mess: "",
-      res_errmess: "",
-      res_status: "",
+      headers_text: '',
+      query_Params: '',
+      request_text: '',
+      response_text: '',
+      res_mess: '',
+      res_errmess: '',
+      res_status: '',
     }
   },
   methods: {
-    request_header_change(obj) {
-      console.log(obj);
-      this.req_items[0]["X-M2M-RI"] = obj["X-M2M-RI"];
-      this.req_items[0]["X-M2M-RVI"] = obj["X-M2M-RVI"];
-      this.req_items[0]["X-M2M-Origin"] = obj["X-M2M-Origin"];
-      this.req_items[0]["Accept"] = obj["Accept"];
-      this.$refs.reqtable.refresh();
-    },
-    response_header_change(obj) {
-      console.log(obj);
-      this.res_items[0]["X-M2M-RI"] = obj["X-M2M-RI"];
-      this.res_items[0]["X-M2M-RSC"] = obj["X-M2M-RSC"];
-      this.res_items[0]["X-M2M-RVI"] = obj["X-M2M-RVI"];
-      this.res_items[0]["Content-Length"] = obj["Content-Length"];
-      this.res_items[0]["Content-Type"] = obj["Content-Type"];
-      this.$refs.restable.refresh();
-    },
-    retrieveRequestJSONText() {
-      let ret_obj = {};
-
-      let headers = {};
-      headers["X-M2M-RI"] = this.data_obj["X-M2M-RI"];
-      headers["X-M2M-Origin"] = this.data_obj["X-M2M-Origin"];
-      headers["X-M2M-RVI"] = this.data_obj["X-M2M-RVI"];
-      headers["Accept"] = this.data_obj["Accept"];
-
-      this.req_display_obj = ret_obj;
-      this.request_header_change(headers);
-      return (this.request_text = JSON.stringify(ret_obj, undefined, 2));
-    },
-    retrieveRequest(){
+    deleteRS() {
       let url = "http://" + this.data_obj.Platform_addr + "/" + this.data_obj.Res_Id + "/" + this.query_Params;
-
       const headers = {};
       headers["X-M2M-RI"] = this.data_obj.X_M2M_RI;
       headers["X-M2M-Origin"] = this.data_obj.X_M2M_Origin;
+      headers["X-M2M-RVI"] = "2a";
       headers["Accept"] = this.data_obj.Accept;
 
-      this.request_header_change(headers);
       axios
-        .get(url, { headers })
+        .delete(url, { headers })
         .then((response) => {
           this.res_mess = response.data;
           this.res_status = response.status;
@@ -109,9 +118,10 @@ export default {
         })
         .catch((error) => {
           this.res_errmess = error.response.data;
-          if (error.response.status === 409) {
+
+          if (error.response.status === 404) {
             this.res_status = error.response.status;
-          } else if (error.response.status === 404) {
+          } else if (error.response.status === 403) {
             this.res_status = error.response.status;
           }
           let headers = {};
@@ -126,5 +136,5 @@ export default {
         });
     },
   },
-};
+}
 </script>
