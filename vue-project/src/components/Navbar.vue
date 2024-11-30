@@ -19,7 +19,7 @@
   
   <script>
   export default {
-    name: 'Navbar',
+    name: 'SideNavbar',
     data() {
       return {
         menuItems: [
