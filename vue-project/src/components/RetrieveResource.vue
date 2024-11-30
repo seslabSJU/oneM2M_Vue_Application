@@ -65,6 +65,66 @@ export default {
       this.res_items[0]["Content-Type"] = obj["Content-Type"];
       this.$refs.restable.refresh();
     },
-  }
-}
+    retrieveRequestJSONText() {
+      let ret_obj = {};
+
+      let headers = {};
+      headers["X-M2M-RI"] = this.data_obj["X-M2M-RI"];
+      headers["X-M2M-Origin"] = this.data_obj["X-M2M-Origin"];
+      headers["X-M2M-RVI"] = this.data_obj["X-M2M-RVI"];
+      headers["Accept"] = this.data_obj["Accept"];
+
+      this.req_display_obj = ret_obj;
+      this.request_header_change(headers);
+      return (this.request_text = JSON.stringify(ret_obj, undefined, 2));
+    },
+    retrieveRequest(){
+      let url = "http://" + this.data_obj.Platform_addr + "/" + this.data_obj.Res_Id + this.query_Params;
+
+      const headers = {};
+      headers["X-M2M-RI"] = this.data_obj.X_M2M_RI;
+      headers["X-M2M-Origin"] = this.data_obj.X_M2M_Origin;
+      headers["Accept"] = this.data_obj.Accept;
+
+      this.request_header_change(headers);
+      axios
+        .get(url, { headers })
+        .then((response) => {
+          this.res_mess = response.data;
+          this.res_status = response.status;
+
+          let headers = {};
+          headers["X-M2M-RI"] = response.headers["x-m2m-ri"];
+          headers["X-M2M-RSC"] = response.headers["x-m2m-rsc"];
+          headers["X-M2M-RVI"] = response.headers["x-m2m-rvi"];
+          headers["Content-Length"] = response.headers["content-length"];
+          headers["Content-Type"] = response.headers["content-type"];
+          this.response_header_change(headers);
+
+          return (this.response_text = JSON.stringify(
+            this.res_mess,
+            undefined,
+            2
+          ));
+        })
+        .catch((error) => {
+          this.res_errmess = error.response.data;
+          if (error.response.status === 409) {
+            this.res_status = error.response.status;
+          } else if (error.response.status === 404) {
+            this.res_status = error.response.status;
+          }
+          let headers = {};
+          headers["X-M2M-RI"] = error.response.headers["x-m2m-ri"];
+          headers["X-M2M-RSC"] = error.response.headers["x-m2m-rsc"];
+          headers["X-M2M-RVI"] = error.response.headers["x-m2m-rvi"];
+          headers["Content-Length"] = error.response.headers["content-length"];
+          headers["Content-Type"] = error.response.headers["content-type"];
+          this.response_header_change(headers);
+
+          return (this.response_text = this.res_errmess);
+        });
+    },
+  },
+};
 </script>
