@@ -74,7 +74,7 @@ export default {
   },
   methods: {
     deleteRS() {
-      let url = "http://" + this.data_obj.Platform_addr + "/" + this.data_obj.Res_Id + this.query_Params;
+      let url = "http://" + this.data_obj.Platform_addr + "/" + this.data_obj.Res_Id + "/" + this.query_Params;
       const headers = {};
       headers["X-M2M-RI"] = this.data_obj.X_M2M_RI;
       headers["X-M2M-Origin"] = this.data_obj.X_M2M_Origin;
@@ -109,7 +109,6 @@ export default {
           } else if (error.response.status === 403) {
             this.res_status = error.response.status;
           }
-          F
           let headers = {};
           headers["X-M2M-RI"] = error.response.headers["x-m2m-ri"];
           headers["X-M2M-RSC"] = error.response.headers["x-m2m-rsc"];
