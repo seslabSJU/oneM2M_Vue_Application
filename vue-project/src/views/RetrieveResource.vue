@@ -129,13 +129,6 @@ export default {
           } else if (error.response.status === 404) {
             this.res_status = error.response.status;
           }
-          let headers = {};
-          headers["X-M2M-RI"] = error.response.headers["x-m2m-ri"];
-          headers["X-M2M-RSC"] = error.response.headers["x-m2m-rsc"];
-          headers["X-M2M-RVI"] = error.response.headers["x-m2m-rvi"];
-          headers["Content-Length"] = error.response.headers["content-length"];
-          headers["Content-Type"] = error.response.headers["content-type"];
-          this.response_header_change(headers);
 
           return (this.response_text = this.res_errmess);
         });

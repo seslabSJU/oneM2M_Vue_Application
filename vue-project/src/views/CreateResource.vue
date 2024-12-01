@@ -261,6 +261,7 @@ export default {
       let cin_obj = {}
       cin_obj['m2m:cin'] = {}
 
+      if (this.data_obj.rn != '') cin_obj['m2m:cin'].rn = this.data_obj.rn
       if (this.data_obj.lbl != '') cin_obj['m2m:cin'].lbl = this.data_obj.lbl.split(', ')
       if (this.data_obj.con != '') cin_obj['m2m:cin'].con = this.data_obj.con
 
