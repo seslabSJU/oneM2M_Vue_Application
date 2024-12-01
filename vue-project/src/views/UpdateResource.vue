@@ -106,7 +106,7 @@ export default {
       this.req_items[0]['Content-Type'] = obj['Content-Type']
       this.req_items[0]['Content-RVI'] = obj['2a']
       this.req_items[0]['Accept'] = obj['Accept']
-      this.$refs.reqtable.refresh()
+      // this.$refs.reqtable.refresh()
     },
     response_header_change(obj) {
       console.log(obj)
@@ -115,7 +115,7 @@ export default {
       this.res_items[0]['X-M2M-RVI'] = obj['X-M2M-RVI']
       this.res_items[0]['Content-Length'] = obj['Content-Length']
       this.res_items[0]['Content-Type'] = obj['Content-Type']
-      this.$refs.restable.refresh()
+      // this.$refs.restable.refresh()
     },
     updateAE() {
         let ae_obj = {

@@ -44,7 +44,7 @@
           <input type="text" v-model="data_obj.Accept" />
         </div>
 
-        <button type="submit" class="btn-submit">Send</button>
+        <button type="submit" class="btn-submit" @click="handleRequestSend">Send</button>
       </form>
 
       <!-- Request와 Response -->
@@ -81,6 +81,8 @@
 </template>
 
 <script>
+import axios from 'axios'
+
 export default {
   data() {
     return {
@@ -89,17 +91,17 @@ export default {
       data_obj: {
         Platform_addr: '127.0.0.1:3000',
         Res_Id: 'TinyIoT',
-        X_M2M_RI: '12345',
+        X_M2M_RI: 'create',
         X_M2M_RVI: '2a',
         X_M2M_Origin: 'CAdmin',
         Accept: 'application/json',
 
-        lbl: '',
+        lbl: [],
         mni: '',
         mbs: '',
         ty: '',
         op: '',
-        api: '',
+        api: 'Nmyapp3',
         rr: true,
         con: '',
         rn: '',
@@ -115,10 +117,42 @@ export default {
         pvs_acr: [],
         mid: [],
         mnm: '',
-          mt: '',
-          csy: '',
+        mt: '',
+        csy: '',
       },
-    };
+      req_fields: [
+        { key: 'X-M2M-RI', class: 'text-center' },
+        { key: 'X-M2M-Origin', class: 'text-center' },
+        { key: 'X-M2M-RVI', class: 'text-center' },
+        { key: 'Content-Type', class: 'text-center' },
+        { key: 'Accept', class: 'text-center' },
+      ],
+      req_items: [
+        { 'X-M2M-RI': '', 'X-M2M-Origin': '', 'X-M2M-RVI': '', 'Content-Type': '', Accept: '' },
+      ],
+      res_fields: [
+        { key: 'X-M2M-RI', class: 'text-center' },
+        { key: 'X-M2M-RSC', class: 'text-center' },
+        { key: 'X-M2M-RVI', class: 'text-center' },
+        { key: 'Content-Length', class: 'text-center' },
+        { key: 'Content-Type', class: 'text-center' },
+      ],
+      res_items: [
+        {
+          'X-M2M-RI': '',
+          'X-M2M-RSC': '',
+          'X-M2M-RVI': '',
+          'Content-Length': '',
+          'Content-Type': '',
+        },
+      ],
+      headers_text: '',
+      request_text: '',
+      response_text: '',
+      res_mess: '',
+      res_errmess: '',
+      res_status: '',
+    }
   },
   methods: {
     selectEntity(entity) {
@@ -128,6 +162,23 @@ export default {
     handleCreate() {
       alert(`Creating ${this.selectedEntity}...`);
     },
+    handleRequestSend(){
+      switch(this.selectedEntity){
+        case 'AE':
+          console.log(this.createAE());
+          break;
+        case 'Container':
+          console.log(this.createContainer());
+          break;
+        case 'ContentInstance':
+          console.log(this.createContentInstance()  );
+          break;
+        case 'Subscription':
+          console.log(this.createSubscriptionResource());
+          break;
+      }
+      this.post_request();
+    },
     request_header_change(obj) {
       console.log(obj)
       this.req_items[0]['X-M2M-RI'] = obj['X-M2M-RI']
@@ -135,7 +186,7 @@ export default {
       this.req_items[0]['Content-Type'] = obj['Content-Type']
       this.req_items[0]['Content-RVI'] = obj['2a']
       this.req_items[0]['Accept'] = obj['Accept']
-      this.$refs.reqtable.refresh()
+      // this.$refs.reqtable.refresh()
     },
     response_header_change(obj) {
       console.log(obj)
@@ -144,20 +195,21 @@ export default {
       this.res_items[0]['X-M2M-RVI'] = obj['X-M2M-RVI']
       this.res_items[0]['Content-Length'] = obj['Content-Length']
       this.res_items[0]['Content-Type'] = obj['Content-Type']
-      this.$refs.restable.refresh()
+      // this.$refs.restable.refresh()
     },
     createAE() {
       let ae_obj = {}
       ae_obj['m2m:ae'] = {}
 
       if (this.data_obj.rn != '') ae_obj['m2m:ae'].rn = this.data_obj.rn
-      if (this.data_obj.lbl != '') ae_obj['m2m:ae'].lbl = JSON.parse(this.data_obj.lbl)
+      if (this.data_obj.lbl.length > 0) ae_obj['m2m:ae'].lbl = JSON.parse(this.data_obj.lbl)
       if (this.data_obj.api == '' || this.data_obj.rr == '') {
         alert('Enter app-Id(api) and requestReachability(rr)')
       } else {
         ae_obj['m2m:ae'].api = this.data_obj.api
         ae_obj['m2m:ae'].rr = this.data_obj.rr
       }
+      ae_obj['m2m:ae'].srv = this.data_obj.srv
       this.data_obj['Content-Type'] = 'application/json;ty=2'
       this.data_obj['Body'] = ae_obj
 
@@ -243,8 +295,127 @@ export default {
       this.request_header_change(headers)
       return (this.request_text = JSON.stringify(this.req_display_obj, undefined, 2))
     },
+    createRemoteCSE() {
+      let csr_obj = {}
+      csr_obj['m2m:csr'] = {}
+      if (this.data_obj.rn != '') csr_obj['m2m:csr'].rn = this.data_obj.rn
+      if (this.data_obj.cb != '') csr_obj['m2m:csr'].cb = this.data_obj.cb
+      else alert('Enter Callback URI(cb)') // not quite sure about this
+      if (this.data_obj.rr != '') csr_obj['m2m:csr'].rr = this.data_obj.rr
+      if (this.data_obj.csi != '') csr_obj['m2m:csr'].csi = this.data_obj.csi
+      if (this.data_obj.poa.length > 0) csr_obj['m2m:csr'].poa = JSON.parse(this.data_obj.poa)
+      if (this.data_obj.srv.length > 0) csr_obj['m2m:csr'].srv = JSON.parse(this.data_obj.srv)
+
+      this.data_obj['Content-Type'] = 'application/json;ty=16'
+      this.data_obj['Body'] = csr_obj
+
+      let headers = {}
+      headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
+      headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
+      headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
+      headers['Content-Type'] = this.data_obj['Content-Type']
+      headers['Accept'] = this.data_obj.Accept
+
+      this.req_display_obj = csr_obj
+      this.request_header_change(headers)
+      return (this.request_text = JSON.stringify(this.req_display_obj, undefined, 2))
+    },
+    createACP(){
+      let acp_obj = {}
+
+      acp_obj['m2m:acp'] = {}
+      acp_obj['m2m:acp'].pv = {}
+      acp_obj['m2m:acp'].pvs = {}
+      if(this.data_obj.rn != '') acp_obj['m2m:acp'].rn = this.data_obj.rn
+      acp_obj['m2m:acp'].pv.acr = JSON.parse(this.data_obj.pv_acr)
+      acp_obj['m2m:acp'].pvs.acr = JSON.parse(this.data_obj.pvs_acr)
+
+      this.data_obj['Content-Type'] = 'application/json;ty=1'
+      this.data_obj['Body'] = acp_obj
+
+      let headers = {}
+      headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
+      headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
+      headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
+      headers['Content-Type'] = this.data_obj['Content-Type']
+      headers['Accept'] = this.data_obj.Accept
+
+      this.req_display_obj = acp_obj
+      this.request_header_change(headers)
+      return (this.request_text = JSON.stringify(this.req_display_obj, undefined, 2))
+    },
+    createGRP(){
+      let grp_obj = {}
+      grp_obj['m2m:grp'] = {}
+      if(this.data_obj.rn != '') grp_obj['m2m:grp'].rn = this.data_obj.rn
+      if(this.data_obj.mid.length > 0) grp_obj['m2m:grp'].mid = JSON.parse(this.data_obj.mid)
+      if(this.data_obj.mnm != '') grp_obj['m2m:grp'].mnm = this.data_obj.mnm
+      if(this.data_obj.mt != '') grp_obj['m2m:grp'].mt = this.data_obj.mt
+      if(this.data_obj.csy != '') grp_obj['m2m:grp'].csy = this.data_obj.csy
+
+      this.data_obj['Content-Type'] = 'application/json;ty=9'
+      this.data_obj['Body'] = grp_obj
+
+      let headers = {}
+      headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
+      headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
+      headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
+      headers['Content-Type'] = this.data_obj['Content-Type']
+      headers['Accept'] = this.data_obj.Accept
+
+      this.req_display_obj = grp_obj
+      this.request_header_change(headers)
+      return (this.request_text = JSON.stringify(this.req_display_obj, undefined, 2))
+    },
+    post_request() {
+      let url =
+        "http://" + this.data_obj.Platform_addr + "/" + this.data_obj.Res_Id;
+      const headers = {};
+      headers["X-M2M-RI"] = this.data_obj.X_M2M_RI;
+      headers["X-M2M-Origin"] = this.data_obj.X_M2M_Origin;
+      headers["X-M2M-RVI"] = this.data_obj.X_M2M_RVI;
+      headers["Content-Type"] = this.data_obj["Content-Type"];
+      headers["Accept"] = this.data_obj.Accept;
+
+      let body = this.data_obj.Body;
+      axios.post(url, body, { headers })
+        .then((response) => {
+          this.res_mess = response.data;
+          this.res_status = response.status;
+          let headers = {};
+          headers["X-M2M-RI"] = response.headers["x-m2m-ri"];
+          headers["X-M2M-RSC"] = response.headers["x-m2m-rsc"];
+          headers["X-M2M-RVI"] = response.headers["x-m2m-rvi"];
+          headers["Content-Length"] = response.headers["content-length"];
+          headers["Content-Type"] = response.headers["content-type"];
+          this.response_header_change(headers);
+
+          return (this.response_text = JSON.stringify(
+            this.res_mess,
+            undefined,
+            2
+          ));
+        })
+        .catch((error) => {
+          this.res_errmess = error.response.statusText;
+          if (error.response.status === 409) {
+            this.res_status = error.response.status;
+          } else if (error.response.status === 404) {
+            this.res_status = error.response.status;
+          }
+          let headers = {};
+          headers["X-M2M-RI"] = error.response.headers["x-m2m-ri"];
+          headers["X-M2M-RSC"] = error.response.headers["x-m2m-rsc"];
+          headers["X-M2M-RVI"] = error.response.headers["x-m2m-rvi"];
+          headers["Content-Length"] = error.response.headers["content-length"];
+          headers["Content-Type"] = error.response.headers["content-type"];
+          this.response_header_change(headers);
+
+          return (this.response_text = this.res_errmess);
+        });
+    },
   },
-};
+}
 </script>
 
 <style scoped>
@@ -287,11 +458,8 @@ h2 {
 }
 
 .main-content {
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  width: 100%;
-  max-width: 100%;
+  display: contents;
+
 }
 
 .form-section {
@@ -388,6 +556,4 @@ input::placeholder {
 textarea::placeholder {
   color: #888; /* 텍스트 에어리어 플레이스홀더 색상 */
 }
-
-
 </style>
