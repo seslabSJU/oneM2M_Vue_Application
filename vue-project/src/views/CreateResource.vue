@@ -204,7 +204,7 @@ export default {
       if (this.data_obj.api == '' || this.data_obj.rr == '') {
         alert('Enter app-Id(api) and requestReachability(rr)')
       } else {
-        ae_obj['m2m:ae'].api = this.data_obj.api + this.data_obj.rn
+        ae_obj['m2m:ae'].api = this.data_obj.api.concat(this.data_obj.rn)
         ae_obj['m2m:ae'].rr = this.data_obj.rr
       }
       ae_obj['m2m:ae'].srv = this.data_obj.srv
@@ -366,17 +366,17 @@ export default {
       return (this.request_text = JSON.stringify(this.req_display_obj, undefined, 2))
     },
     post_request() {
-      let url =
-        "http://" + this.data_obj.Platform_addr + "/" + this.data_obj.Res_Id;
-      const headers = {};
-      headers["X-M2M-RI"] = this.data_obj.X_M2M_RI;
-      headers["X-M2M-Origin"] = this.data_obj.X_M2M_Origin;
-      headers["X-M2M-RVI"] = this.data_obj.X_M2M_RVI;
-      headers["Content-Type"] = this.data_obj["Content-Type"];
-      headers["Accept"] = this.data_obj.Accept;
+      let url = "/" + this.data_obj.Res_Id;
+      const headers = {
+        "X-M2M-RI": this.data_obj.X_M2M_RI,
+        "X-M2M-Origin": this.data_obj.X_M2M_Origin,
+        "X-M2M-RVI": this.data_obj.X_M2M_RVI,
+        "Content-Type": this.data_obj["Content-Type"],
+        "Accept": this.data_obj.Accept
+      };
 
       let body = this.data_obj.Body;
-      axios.post(url, body, headers)
+      axios.post(url, body, { headers })
         .then((response) => {
           this.res_mess = response.data;
           this.res_status = response.status;
