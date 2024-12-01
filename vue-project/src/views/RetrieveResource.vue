@@ -2,6 +2,14 @@
   <div class="retrieve-resource">
     <h2>Retrieve Resource</h2>
 
+    <!-- 주체 선택 버튼 -->
+    <div class="entity-selection">
+      <button v-for="entity in entities" :key="entity" class="entity-button" @click="selectEntity(entity)">
+        {{ entity }}
+      </button>
+    </div>
+
+
     <!-- 입력 폼과 요청/응답 영역 -->
     <div class="main-content">
       <!-- 입력 폼 -->
@@ -10,10 +18,27 @@
           <label for="platformAddress">Platform Address:</label>
           <input type="text" id="platformAddress" v-model="data_obj.Platform_addr" readonly />
         </div>
-        <div class="form-group">
-          <label for="resourceId">Resource ID:</label>
+        <div class="form-group" v-if="selectedEntity === 'AE'">
+          <label for="resourceId">Resource ID(TO) (ex. TinyIoT):</label>
           <input type="text" id="resourceId" v-model="data_obj.Res_Id" />
         </div>
+        <div class="form-group" v-if="selectedEntity === 'Container'">
+          <label for="resourceId">Resource ID(TO) (ex. TinyIoT/AE_RN):</label>
+          <input type="text" id="resourceId" v-model="data_obj.Res_Id" />
+        </div>
+        <div class="form-group" v-if="selectedEntity === 'ContentInstance'">
+          <label for="resourceId">Resource ID(TO) (ex. TinyIoT/AE_RN/CNT_RN):</label>
+          <input type="text" id="resourceId" v-model="data_obj.Res_Id" />
+        </div>
+        <div class="form-group" v-if="selectedEntity === 'Subscription'">
+          <label for="resourceId">Resource ID(TO) (ex. TinyIoT/AE_RN):</label>
+          <input type="text" id="resourceId" v-model="data_obj.Res_Id" />
+        </div>
+        <div class="form-group">
+          <label for="resourceName">{{ selectedEntity }} Resource Name:</label>
+          <input type="text" id="resourceName" v-model="data_obj.rn" :placeholder="`Enter your ${selectedEntity} Resource name`" />
+        </div>
+
 
         <h3>Headers</h3>
         <div class="form-group">
@@ -72,6 +97,8 @@ import axios from 'axios'
 export default {
   data() {
     return {
+      entities: ['AE', 'Container', 'ContentInstance', 'Subscription'], // 주체 목록
+      selectedEntity: 'AE', // 기본 선택된 주체
       data_obj: {
         Platform_addr: '127.0.0.1:3000',
         Res_Id: 'TinyIoT',
@@ -115,10 +142,102 @@ export default {
     }
   },
   methods: {
+    selectEntity(entity) {
+      this.selectedEntity = entity;
+      console.log(`Selected Entity: ${entity}`);
+    },
     handleRetrieve() {
       alert(`Retrieving... ${this.data_obj.Res_Id}`);
-      this.retrieveRequestJSONText();
+      switch(this.selectedEntity){
+        case 'AE':
+          console.log(this.retrieveAE())
+          break;
+        case 'Container':
+          console.log(this.retrieveContainer())
+          break;
+        case 'ContentInstance':
+          console.log(this.createContentInstance())
+          break;
+        case 'Subscription':
+          console.log(this.retrieveSubscriptionResource())
+          break;
+      }
       this.retrieveRequest();
+    },
+    retrieveAE() {
+      let ae_obj = {}
+      ae_obj['m2m:ae'] = {}
+
+      if (this.data_obj.rn != '') ae_obj['m2m:ae'].rn = this.data_obj.rn
+      this.data_obj['Content-Type'] = 'application/json;ty=2'
+      this.data_obj['Body'] = ae_obj
+
+      let headers = {}
+      headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
+      headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
+      headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
+      headers['Content-Type'] = this.data_obj['Content-Type']
+      headers['Accept'] = this.data_obj.Accept
+
+      this.req_display_obj = ae_obj
+      this.request_header_change(headers)
+      return (this.request_text = JSON.stringify(this.req_display_obj, undefined, 2))
+    },
+    retrieveContainer() {
+      let cnt_obj = {}
+      cnt_obj['m2m:cnt'] = {}
+
+      if (this.data_obj.rn != '') cnt_obj['m2m:cnt'].rn = this.data_obj.rn
+      this.data_obj['Content-Type'] = 'application/json;ty=3'
+      this.data_obj['Body'] = cnt_obj
+
+      let headers = {}
+      headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
+      headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
+      headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
+      headers['Content-Type'] = this.data_obj['Content-Type']
+      headers['Accept'] = this.data_obj.Accept
+
+      this.req_display_obj = cnt_obj
+      this.request_header_change(headers)
+      return (this.request_text = JSON.stringify(this.req_display_obj, undefined, 2))
+    },
+    retrieveContentInstance() {
+      let cin_obj = {}
+      cin_obj['m2m:cin'] = {}
+
+      if (this.data_obj.rn != '') cin_obj['m2m:cin'].rn = this.data_obj.rn
+      this.data_obj['Content-Type'] = 'application/json;ty=4'
+      this.data_obj['Body'] = cin_obj
+
+      let headers = {}
+      headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
+      headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
+      headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
+      headers['Content-Type'] = this.data_obj['Content-Type']
+      headers['Accept'] = this.data_obj.Accept
+
+      this.req_display_obj = cin_obj
+      this.request_header_change(headers)
+      return (this.request_text = JSON.stringify(this.req_display_obj, undefined, 2))
+    },
+    retrieveSubscriptionResource() {
+      let sub_obj = {}
+      sub_obj['m2m:sub'] = {}
+      if (this.data_obj.rn != '') sub_obj['m2m:sub'].rn = this.data_obj.rn
+      this.data_obj['Content-Type'] = 'application/json;ty=23'
+      this.data_obj['Body'] = sub_obj
+
+      let headers = {}
+      headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
+      headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
+      headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
+      headers['Content-Type'] = this.data_obj['Content-Type']
+      headers['Accept'] = this.data_obj.Accept
+
+      this.req_display_obj = sub_obj
+      this.request_header_change(headers)
+      return (this.request_text = JSON.stringify(this.req_display_obj, undefined, 2))
     },
     request_header_change(obj) {
       console.log(obj);
@@ -137,21 +256,8 @@ export default {
       this.res_items[0]["Content-Type"] = obj["Content-Type"];
       // this.$refs.restable.refresh();
     },
-    retrieveRequestJSONText() {
-      let ret_obj = {};
-
-      let headers = {};
-      headers["X-M2M-RI"] = this.data_obj["X-M2M-RI"];
-      headers["X-M2M-Origin"] = this.data_obj["X-M2M-Origin"];
-      headers["X-M2M-RVI"] = this.data_obj["X-M2M-RVI"];
-      headers["Accept"] = this.data_obj["Accept"];
-
-      this.req_display_obj = ret_obj;
-      this.request_header_change(headers);
-      return (this.request_text = JSON.stringify(ret_obj, undefined, 2));
-    },
     retrieveRequest(){
-      let url = `/${this.data_obj.Res_Id}`;
+      let url = `/${this.data_obj.Res_Id}/${this.data_obj.rn}`;
 
       const headers = {};
       headers["X-M2M-RI"] = this.data_obj.X_M2M_RI;
@@ -182,6 +288,7 @@ export default {
     },
   },
 };
+
 </script>
 
 <style scoped>
