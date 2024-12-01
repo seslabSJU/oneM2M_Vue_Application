@@ -44,7 +44,7 @@
           <input type="text" v-model="data_obj.Accept" />
         </div>
 
-        <button type="submit" class="btn-submit" @click="handleRequestSend">Send</button>
+        <button type="submit" class="btn-submit">Send</button>
       </form>
 
       <!-- Request와 Response -->
@@ -161,20 +161,18 @@ export default {
     },
     handleCreate() {
       alert(`Creating ${this.selectedEntity}...`);
-    },
-    handleRequestSend(){
       switch(this.selectedEntity){
         case 'AE':
-          console.log(this.createAE());
+          console.log(this.createAE())
           break;
         case 'Container':
-          console.log(this.createContainer());
+          console.log(this.createContainer())
           break;
         case 'ContentInstance':
-          console.log(this.createContentInstance()  );
+          console.log(this.createContentInstance())
           break;
         case 'Subscription':
-          console.log(this.createSubscriptionResource());
+          console.log(this.createSubscriptionResource())
           break;
       }
       this.post_request();
@@ -206,7 +204,7 @@ export default {
       if (this.data_obj.api == '' || this.data_obj.rr == '') {
         alert('Enter app-Id(api) and requestReachability(rr)')
       } else {
-        ae_obj['m2m:ae'].api = this.data_obj.api
+        ae_obj['m2m:ae'].api = this.data_obj.api + this.data_obj.rn
         ae_obj['m2m:ae'].rr = this.data_obj.rr
       }
       ae_obj['m2m:ae'].srv = this.data_obj.srv
@@ -378,7 +376,7 @@ export default {
       headers["Accept"] = this.data_obj.Accept;
 
       let body = this.data_obj.Body;
-      axios.post(url, body, { headers })
+      axios.post(url, body, headers)
         .then((response) => {
           this.res_mess = response.data;
           this.res_status = response.status;
@@ -397,7 +395,7 @@ export default {
           ));
         })
         .catch((error) => {
-          this.res_errmess = error.response.statusText;
+          this.res_errmess = error.response.data;
           if (error.response.status === 409) {
             this.res_status = error.response.status;
           } else if (error.response.status === 404) {

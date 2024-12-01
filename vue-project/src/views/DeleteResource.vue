@@ -38,9 +38,7 @@
             <li>Accept: {{ data_obj.Accept }}</li>
           </ul>
         </div>
-        <textarea placeholder="Request Body" class="body-text" readonly>
-{{ JSON.stringify(request_text, null, 2) }}
-        </textarea>
+        <textarea v-model="request_text" placeholder="Request Body" class="body-text" readonly/>
       </div>
       <div class="response">
         <h3>Response</h3>
@@ -54,9 +52,7 @@
             <li>Content-Type: {{ res_items[0]['Content-Type'] }}</li>
           </ul>
         </div>
-        <textarea placeholder="Response Body" class="body-text" readonly>
-{{ response_text }}
-        </textarea>
+        <textarea v-model="response_text" placeholder="Response Body" class="body-text" readonly/>
       </div>
     </div>
   </div>
