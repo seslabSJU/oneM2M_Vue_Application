@@ -25,9 +25,9 @@
           <label for="resourceName">{{ selectedEntity }} Resource Name:</label>
           <input type="text" id="resourceName" v-model="data_obj.rn" :placeholder="`Enter your ${selectedEntity} Resource name`" />
         </div>
-        <div class="form-group">
+        <div class="form-group" v-if="['AE', 'Container', 'ContentInstance'].includes(selectedEntity)">
           <label for="label">Label:</label>
-          <input type="text" id="label" v-model="data_obj.lbl" />
+          <input type="text" id="label" v-model="data_obj.lbl" placeholder="Enter labels (comma separated)" />
         </div>
 
         <!-- ContentInstance를 위한 con 입력 필드 -->

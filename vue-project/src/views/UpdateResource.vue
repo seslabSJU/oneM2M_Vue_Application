@@ -1,18 +1,89 @@
 <template>
-  <div>
+  <div class="update-resource">
     <h2>Update Resource</h2>
-    <form @submit.prevent="handleUpdate">
-      <div>
-        <label>Resource Name:</label>
-        <input type="text" v-model="resourceName" />
+
+    <!-- 주체 선택 버튼 -->
+    <div class="entity-selection">
+      <button v-for="entity in entities"
+              :key="entity"
+              class="entity-button"
+              @click="selectEntity(entity)">
+        {{ entity }}
+      </button>
+    </div>
+
+    <!-- 입력 폼과 요청/응답 영역 -->
+    <div class="main-content">
+      <!-- 입력 폼 -->
+      <form @submit.prevent="handleUpdate" class="form-section">
+        <div class="form-group">
+          <label for="platformAddress">Platform Address:</label>
+          <input type="text" id="platformAddress" v-model="data_obj.Platform_addr" readonly />
+        </div>
+        <div class="form-group">
+          <label for="resourceId">Resource ID:</label>
+          <input type="text" id="resourceId" v-model="data_obj.Res_Id" />
+        </div>
+
+        <!-- AE와 Container를 위한 Label 입력 필드 -->
+        <div class="form-group" v-if="['AE', 'Container'].includes(selectedEntity)">
+          <label for="label">Label:</label>
+          <input type="text" id="label" v-model="data_obj.lbl" placeholder="Enter labels (comma separated)" />
+        </div>
+
+        <!-- Subscription을 위한 nu 입력 필드 -->
+        <div class="form-group" v-if="current_resource_type === 'Subscription'">
+          <label for="nu">Notification URI:</label>
+          <input type="text" id="nu" v-model="data_obj.nu" placeholder="Enter notification URIs (comma separated)" />
+        </div>
+
+        <h3>Headers</h3>
+        <div class="form-group">
+          <label>X-M2M-RI:</label>
+          <input type="text" v-model="data_obj.X_M2M_RI" />
+        </div>
+        <div class="form-group">
+          <label>X-M2M-Origin:</label>
+          <input type="text" v-model="data_obj.X_M2M_Origin" />
+        </div>
+        <div class="form-group">
+          <label>Accept:</label>
+          <input type="text" v-model="data_obj.Accept" />
+        </div>
+
+        <button type="submit" class="btn-submit">Update</button>
+      </form>
+
+      <!-- Request와 Response -->
+      <div class="request-response">
+        <div class="request">
+          <h3>Request</h3>
+          <div class="header">
+            <p>Header</p>
+            <ul>
+              <li>X-M2M-RI: {{ data_obj.X_M2M_RI }}</li>
+              <li>X-M2M-Origin: {{ data_obj.X_M2M_Origin }}</li>
+              <li>Accept: {{ data_obj.Accept }}</li>
+            </ul>
+          </div>
+          <textarea placeholder="Request Body" class="body-text" v-model="request_text" readonly></textarea>
+        </div>
+        <div class="response">
+          <h3>Response</h3>
+          <div class="header">
+            <p>Header</p>
+            <ul>
+              <li>X-M2M-RI: {{ res_items[0]['X-M2M-RI'] }}</li>
+              <li>X-M2M-RSC: {{ res_items[0]['X-M2M-RSC'] }}</li>
+              <li>X-M2M-RVI: {{ res_items[0]['X-M2M-RVI'] }}</li>
+              <li>Content-Length: {{ res_items[0]['Content-Length'] }}</li>
+              <li>Content-Type: {{ res_items[0]['Content-Type'] }}</li>
+            </ul>
+          </div>
+          <textarea placeholder="Response Body" class="body-text" v-model="response_text" readonly></textarea>
+        </div>
       </div>
-      <div>
-        <label>New Label:</label>
-        <input type="text" v-model="newLabel" />
-      </div>
-      <button type="submit">Update</button>
-    </form>
-    <p v-if="response">{{ response }}</p>
+    </div>
   </div>
 </template>
 
@@ -23,7 +94,8 @@ import axios from 'axios'
 export default {
   data() {
     return {
-      res_name: '',
+      entities: ['AE', 'Container', 'Subscription'], // 주체 목록
+      selectedEntity: 'AE', // 기본 선택된 주체
       data_obj: {
         Platform_addr: '127.0.0.1:3000',
         Res_Id: 'TinyIoT',
@@ -99,12 +171,31 @@ export default {
     }
   },
   methods: {
+    selectEntity(entity) {
+      this.selectedEntity = entity;
+      console.log(`Selected Entity: ${entity}`);
+    },
+    handleUpdate() {
+      alert(`Updating... ${this.data_obj.Res_Id}`);
+      switch(this.selectedEntity){
+        case 'AE':
+          console.log(this.updateAE())
+          break;
+        case 'Container':
+          console.log(this.updateContainer())
+          break;
+        case 'Subscription':
+          console.log(this.updateSubscriptionResource())
+          break;
+      }
+      this.update_request();
+    },
     request_header_change(obj) {
       console.log(obj)
       this.req_items[0]['X-M2M-RI'] = obj['X-M2M-RI']
       this.req_items[0]['X-M2M-Origin'] = obj['X-M2M-Origin']
       this.req_items[0]['Content-Type'] = obj['Content-Type']
-      this.req_items[0]['Content-RVI'] = obj['2a']
+      this.req_items[0]['X-M2M-RVI'] = obj['X-M2M-RVI']
       this.req_items[0]['Accept'] = obj['Accept']
       // this.$refs.reqtable.refresh()
     },
@@ -118,41 +209,67 @@ export default {
       // this.$refs.restable.refresh()
     },
     updateAE() {
-        let ae_obj = {
-        'm2m:ae': {
-            'lbl': ['update1'],
-          }
-        };
+        let ae_obj = {}
+        ae_obj['m2m:ae'] = {}
+        if (this.data_obj.lbl != '') ae_obj['m2m:ae'].lbl = this.data_obj.lbl.split(', ')
+
         this.data_obj.Body = ae_obj;
         this.data_obj['Content-Type'] = 'application/json;ty=2';
-        this.update_request();
+
+        let headers = {}
+        headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
+        headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
+        headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
+        headers['Content-Type'] = this.data_obj['Content-Type']
+        headers['Accept'] = this.data_obj.Accept
+
+        this.req_display_obj = ae_obj
+        this.request_header_change(headers)
+        return (this.request_text = JSON.stringify(this.req_display_obj, undefined, 2))
     },
     updateContainer() {
-        let cnt_obj = {
-        'm2m:cnt': {
-            'lbl': ['update1'],
-          }
-        };
+        let cnt_obj = {}
+        cnt_obj['m2m:cnt'] = {}
+        if (this.data_obj.lbl != '') cnt_obj['m2m:cnt'].lbl = this.data_obj.lbl.split(', ')
+
         this.data_obj.Body = cnt_obj;
         this.data_obj['Content-Type'] = 'application/json;ty=3';
-        this.update_request();
+
+        let headers = {}
+        headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
+        headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
+        headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
+        headers['Content-Type'] = this.data_obj['Content-Type']
+        headers['Accept'] = this.data_obj.Accept
+
+        this.req_display_obj = cnt_obj
+        this.request_header_change(headers)
+        return (this.request_text = JSON.stringify(this.req_display_obj, undefined, 2))
     },
     updateSubscriptionResource() {
-        let sub_obj = {
-        'm2m:sub': {
-            'nu': [''],
-          }
-        };
+        let sub_obj = {}
+        sub_obj['m2m:sub'] = {}
+        if (this.data_obj.nu != '') sub_obj['m2m:sub'].nu = this.data_obj.nu.split(', ')
         this.data_obj.Body = sub_obj;
         this.data_obj['Content-Type'] = 'application/json;ty=23';
-        this.update_request();
+
+        let headers = {}
+        headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
+        headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
+        headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
+        headers['Content-Type'] = this.data_obj['Content-Type']
+        headers['Accept'] = this.data_obj.Accept
+
+        this.req_display_obj = sub_obj
+        this.request_header_change(headers)
+        return (this.request_text = JSON.stringify(this.req_display_obj, undefined, 2))
     },
     update_request() {
-        let url = "http://" + this.data_obj.Platform_addr + "/" + this.data_obj.Res_Id + '/' + this.data.obj.query_Params;
+        let url = `/${this.data_obj.Res_Id}`
         const headers = {
             "X-M2M-RI": this.data_obj.X_M2M_RI,
             "X-M2M-Origin": this.data_obj.X_M2M_Origin,
-            "X-M2M-RVI": "2a",
+            "X-M2M-RVI": this.data_obj.X_M2M_RVI,
             "Content-Type": this.data_obj["Content-Type"],
             "Accept": this.data_obj.Accept
         };
@@ -183,36 +300,163 @@ export default {
     // 성공 응답 처리를 위한 헬퍼 메소드
     handleSuccess(response) {
       this.res_mess = response.data;
-      this.res_status = response.status;
-
-      const headers = {
-        "X-M2M-RI": response.headers["x-m2m-ri"],
-        "X-M2M-RSC": response.headers["x-m2m-rsc"],
-        "X-M2M-RVI": response.headers["x-m2m-rvi"],
-        "Content-Length": response.headers["content-length"],
-        "Content-Type": response.headers["content-type"]
-      };
-
-      this.response_header_change(headers);
       this.response_text = JSON.stringify(this.res_mess, undefined, 2);
     },
 
   // 에러 응답 처리를 위한 헬퍼 메소드
     handleError(error) {
       this.res_errmess = error.response.data;
-      this.res_status = error.response.status;
-
-      const headers = {
-        "X-M2M-RI": error.response.headers["x-m2m-ri"],
-        "X-M2M-RSC": error.response.headers["x-m2m-rsc"],
-        "X-M2M-RVI": error.response.headers["x-m2m-rvi"],
-        "Content-Length": error.response.headers["content-length"],
-        "Content-Type": error.response.headers["content-type"]
-      };
-
-      this.response_header_change(headers);
       this.response_text = this.res_errmess;
     },
   }
 }
 </script>
+
+<style scoped>
+.update-resource {
+  width: 100%;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header{
+  color: #333;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333; /* 더 진한 글씨색 */
+}
+
+.entity-selection {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.entity-button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  font-weight: bold; /* 버튼 텍스트를 굵게 설정 */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.entity-button:hover {
+  background-color: #0056b3;
+}
+
+.main-content {
+  display: contents;
+
+}
+
+.form-section {
+  flex: 1;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #333; /* 더 진한 텍스트 색상 */
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px; /* 입력 필드 텍스트 크기 */
+  color: #333; /* 입력 텍스트 색상 */
+}
+
+input::placeholder {
+  color: #888; /* 플레이스홀더 텍스트 색상 */
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  font-size: 16px; /* 버튼 텍스트 크기 증가 */
+  font-weight: bold; /* 버튼 텍스트 굵게 */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.btn-submit:hover {
+  background-color: #0056b3;
+}
+
+.request-response {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.request,
+.response {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.request h3,
+.response h3 {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333; /* 제목 텍스트를 더 진하게 */
+  margin-bottom: 10px;
+}
+
+.header ul {
+  list-style: none;
+  padding: 0;
+}
+.header{
+  color: #333;
+}
+
+.body-text {
+  width: 100%;
+  height: 100px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  background-color: #ffffff;
+  resize: none;
+  color: #333; /* 텍스트 색상 */
+  font-size: 14px;
+}
+
+textarea::placeholder {
+  height: fit-content;
+  color: #888; /* 텍스트 에어리어 플레이스홀더 색상 */
+  height: fit-content;
+}
+</style>
