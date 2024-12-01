@@ -1,14 +1,19 @@
 <template>
     <nav class="navbar">
       <!-- 햄버거 메뉴 버튼 -->
-      <div class="menu-icon" @click="toggleMenu">
-        <span></span>
-        <span></span>
-        <span></span>
+      <div class="nav-start">
+        <div class="menu-icon" @click="toggleMenu" :class="{ 'active': isMenuOpen }">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <span class="nav-title">TinyIoT</span>
       </div>
+
       <div class="logo-container">
         <h2>TinyIoT</h2>
       </div>
+
       <div class="nav-links" :class="{ 'active': isMenuOpen }">
         <router-link 
           v-for="item in menuItems" 
@@ -55,14 +60,24 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
+  width: 200px;
   background: #fff;
   padding: 1rem;
   display:flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   z-index: 1000;
+}
+
+.nav-start {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-title {
+  display: none;
 }
   
   .logo-container {
@@ -70,7 +85,7 @@
     padding: 0 20px;
     margin-bottom: 30px;
     text-align: center;
-    align-items:flex-start;
+    align-items: center;
   }
   
   .logo-container h2 {
@@ -103,6 +118,7 @@
     color: white;
     text-decoration: none;
     transition: all 0.3s ease;
+    align-items: top;
   }
   
   .nav-item:hover {
@@ -131,14 +147,41 @@
     transition: 0.3s;
   }
 
-  @media (max-width: 1400px) {
-  .menu-icon {
-    display: flex;
+  @media (max-width: 1200px) {
+    .nav-start {
     order: 1;
+    margin-right: auto;
+  }
+
+  .nav-title {
+  display: block;
+  order: 2;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #42b983;; /* 원하는 색상으로 변경 가능 */
+}
+
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    padding: 1rem;
+    display:flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 1000;
   }
 
   .logo-container {
-    order: 2;
+    display: none;  /* 1400px 이하에서 로고 컨테이너 숨김 */
+  }
+
+  .menu-icon {
+    display: flex;
+    order: 1;
   }
 
   .nav-links {
