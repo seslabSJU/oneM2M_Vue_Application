@@ -15,7 +15,7 @@
       <form @submit.prevent="handleCreate" class="form-section">
         <div class="form-group">
           <label for="platformAddress">Platform Address:</label>
-          <input type="text" id="platformAddress" v-model="data_obj.Platform_addr" />
+          <input type="text" id="platformAddress" v-model="data_obj.Platform_addr" readonly />
         </div>
         <div class="form-group">
           <label for="resourceId">Resource ID (To):</label>
@@ -85,7 +85,7 @@
               <li>Content-Type:</li>
             </ul>
           </div>
-          <textarea placeholder="Response Body" class="body-text" readonly></textarea>
+          <textarea placeholder="Response Body" class="body-text" v-model="response_text" readonly></textarea>
         </div>
       </div>
     </div>
@@ -313,8 +313,8 @@ export default {
       else alert('Enter Callback URI(cb)') // not quite sure about this
       if (this.data_obj.rr != '') csr_obj['m2m:csr'].rr = this.data_obj.rr
       if (this.data_obj.csi != '') csr_obj['m2m:csr'].csi = this.data_obj.csi
-      if (this.data_obj.poa.length > 0) csr_obj['m2m:csr'].poa = JSON.parse(this.data_obj.poa)
-      if (this.data_obj.srv.length > 0) csr_obj['m2m:csr'].srv = JSON.parse(this.data_obj.srv)
+      if (this.data_obj.poa.length > 0) csr_obj['m2m:csr'].poa = this.data_obj.poa.split(', ')
+      if (this.data_obj.srv.length > 0) csr_obj['m2m:csr'].srv = this.data_obj.srv.split(', ')
 
       this.data_obj['Content-Type'] = 'application/json;ty=16'
       this.data_obj['Body'] = csr_obj
@@ -337,8 +337,8 @@ export default {
       acp_obj['m2m:acp'].pv = {}
       acp_obj['m2m:acp'].pvs = {}
       if(this.data_obj.rn != '') acp_obj['m2m:acp'].rn = this.data_obj.rn
-      acp_obj['m2m:acp'].pv.acr = JSON.parse(this.data_obj.pv_acr)
-      acp_obj['m2m:acp'].pvs.acr = JSON.parse(this.data_obj.pvs_acr)
+      acp_obj['m2m:acp'].pv.acr = this.data_obj.pv_acr.split(', ')
+      acp_obj['m2m:acp'].pvs.acr = this.data_obj.pvs_acr.split(', ')
 
       this.data_obj['Content-Type'] = 'application/json;ty=1'
       this.data_obj['Body'] = acp_obj
@@ -358,7 +358,7 @@ export default {
       let grp_obj = {}
       grp_obj['m2m:grp'] = {}
       if(this.data_obj.rn != '') grp_obj['m2m:grp'].rn = this.data_obj.rn
-      if(this.data_obj.mid.length > 0) grp_obj['m2m:grp'].mid = JSON.parse(this.data_obj.mid)
+      if(this.data_obj.mid.length > 0) grp_obj['m2m:grp'].mid = this.data_obj.mid.split(', ')
       if(this.data_obj.mnm != '') grp_obj['m2m:grp'].mnm = this.data_obj.mnm
       if(this.data_obj.mt != '') grp_obj['m2m:grp'].mt = this.data_obj.mt
       if(this.data_obj.csy != '') grp_obj['m2m:grp'].csy = this.data_obj.csy
@@ -413,14 +413,6 @@ export default {
           } else if (error.response.status === 404) {
             this.res_status = error.response.status;
           }
-          let headers = {};
-          headers["X-M2M-RI"] = error.response.headers["X-M2M-RI"];
-          headers["X-M2M-RSC"] = error.response.headers["X-M2M-RSC"];
-          headers["X-M2M-RVI"] = error.response.headers["X-M2M-RVI"];
-          headers["Content-Length"] = error.response.headers["Content-Length"];
-          headers["Content-Type"] = error.response.headers["Content-Type"];
-          this.response_header_change(headers);
-
           return (this.response_text = this.res_errmess);
         });
     },
