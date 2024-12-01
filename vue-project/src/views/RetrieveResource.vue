@@ -31,7 +31,7 @@
           <input type="text" id="resourceId" v-model="data_obj.Res_Id" />
         </div>
         <div class="form-group" v-if="selectedEntity === 'Subscription'">
-          <label for="resourceId">Resource ID(TO) (ex. TinyIoT/AE_RN):</label>
+          <label for="resourceId">Resource ID(TO) (ex. TinyIoT/AE_RN/CNT_RN):</label>
           <input type="text" id="resourceId" v-model="data_obj.Res_Id" />
         </div>
         <div class="form-group">
