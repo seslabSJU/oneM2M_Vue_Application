@@ -87,13 +87,36 @@ export default {
       entities: ['AE', 'Container', 'ContentInstance', 'Subscription'], // 주체 목록
       selectedEntity: 'AE', // 기본 선택된 주체
       data_obj: {
-        Platform_addr: '127.0.0.1:7579',
-        Res_Id: 'Mobius',
-        X_M2M_RI: '1234',
-        X_M2M_Origin: 'S',
+        Platform_addr: '127.0.0.1:3000',
+        Res_Id: 'TinyIoT',
+        X_M2M_RI: '12345',
+        X_M2M_RVI: '2a',
+        X_M2M_Origin: 'CAdmin',
         Accept: 'application/json',
-        rn: '',
+
         lbl: '',
+        mni: '',
+        mbs: '',
+        ty: '',
+        op: '',
+        api: '',
+        rr: true,
+        con: '',
+        rn: '',
+        nu: '',
+        enc: '',
+        exc: '10',
+        net: [3, 4],
+        poa: [],
+        cb: '',
+        csi: '',
+        srv: ['1', '2', '2a'],
+        pv_acr: [],
+        pvs_acr: [],
+        mid: [],
+        mnm: '',
+          mt: '',
+          csy: '',
       },
     };
   },
@@ -149,8 +172,8 @@ h2 {
 }
 
 .main-content {
-  display: flex;
-  gap: 20px;
+  display: contents;
+  
 }
 
 .form-section {
