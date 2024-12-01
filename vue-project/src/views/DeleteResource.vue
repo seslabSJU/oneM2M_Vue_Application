@@ -1,230 +1,278 @@
 <template>
-    <div>
-      <h2>Delete Resource</h2>
-      
-      <!-- 탭 버튼들 -->
-      <div class="tab-buttons">
-        <button 
-          v-for="tab in tabs" 
-          :key="tab.id"
-          :class="{ active: currentTab === tab.id }"
-          @click="currentTab = tab.id"
-        >
-          {{ tab.name }}
-        </button>
+  <div class="delete-resource">
+    <h2>Delete Resource</h2>
+
+    <!-- 입력 폼 -->
+    <form @submit.prevent="handleDelete" class="form-section">
+      <div class="form-group">
+        <label>Platform Address:</label>
+        <input type="text" v-model="data_obj.Platform_addr" readonly />
       </div>
-  
-      <!-- 폼 영역 -->
-      <form @submit.prevent="handleDelete">
-        <!-- 공통 필드 -->
-        <div v-if="currentTab !== ''">
-          <div>
-            <label>Platform Address:http://127.0.0.1:3000</label> <!-- server 주소 고정 값 -->
-          </div>
-          <div>
-            <label>CSEBase:TinyIoT</label> <!-- CSEBase 고정 값 -->
-          </div>
-          <div>
-            <label>Delete_RN:</label>
-            <input type="text" v-model="data_obj.rn" placeholder="Name of Resource to Delete" />
-          </div>
+      <div class="form-group">
+        <label>CSEBase:</label>
+        <input type="text" v-model="data_obj.Res_Id" readonly />
+      </div>
+      <div class="form-group">
+        <label>Resource Name to Delete:</label>
+        <input type="text" v-model="data_obj.rn" placeholder="Enter Resource Name (ex. myAE/cnt_name/cni_name)" />
+      </div>
+      <div class="form-group">
+        <label>X-M2M-RVI:</label>
+        <input type="text" v-model="data_obj.X_M2M_RVI" placeholder="Enter X-M2M-RVI (e.g., 2a)" />
+      </div>
+
+      <!-- 삭제 버튼 -->
+      <button type="submit" class="btn-submit">Delete</button>
+    </form>
+
+    <!-- 요청 및 응답 표시 -->
+    <div class="request-response">
+      <div class="request">
+        <h3>Request</h3>
+        <div class="header">
+          <p><strong>Header</strong></p>
+          <ul>
+            <li>X-M2M-RI: {{ data_obj.X_M2M_RI }}</li>
+            <li>X-M2M-Origin: {{ data_obj.X_M2M_Origin }}</li>
+            <li>X-M2M-RVI: {{ data_obj.X_M2M_RVI }}</li>
+            <li>Accept: {{ data_obj.Accept }}</li>
+          </ul>
         </div>
-  
-        <!-- AE 삭제 -->
-        <div v-if="currentTab === 'ae'">
-          <p>AE Resource Delete: /{CSEBase}/{AE_Name}</p>
+        <textarea placeholder="Request Body" class="body-text" readonly>
+{{ JSON.stringify(request_text, null, 2) }}
+        </textarea>
+      </div>
+      <div class="response">
+        <h3>Response</h3>
+        <div class="header">
+          <p><strong>Header</strong></p>
+          <ul>
+            <li>X-M2M-RI: {{ res_items[0]['X-M2M-RI'] }}</li>
+            <li>X-M2M-RSC: {{ res_items[0]['X-M2M-RSC'] }}</li>
+            <li>X-M2M-RVI: {{ res_items[0]['X-M2M-RVI'] }}</li>
+            <li>Content-Length: {{ res_items[0]['Content-Length'] }}</li>
+            <li>Content-Type: {{ res_items[0]['Content-Type'] }}</li>
+          </ul>
         </div>
-  
-        <!-- Container 삭제 -->
-        <div v-if="currentTab === 'container'">
-          <p>Container Resource Delete: /{CSEBase}/{AE_Name}/{Container_Name}</p>
-        </div>
-  
-        <!-- ContentInstance 삭제 -->
-        <div v-if="currentTab === 'contentInstance'">
-          <p>ContentInstance Resource Delete: /{CSEBase}/{AE_Name}/{Container_Name}/{CIN_Name}</p>
-        </div>
-  
-        <!-- Subscription 삭제 -->
-        <div v-if="currentTab === 'subscription'">
-          <p>Subscription Resource Delete: /{CSEBase}/{AE_Name}/{Container_Name}/{SUB_Name}</p>
-        </div>
-  
-        <!-- 삭제 버튼 -->
-        <button type="submit" class="delete-btn">Delete</button>
-      </form>
-  
-      <!-- 응답 표시 -->
-      <div v-if="response_text">
-        <h3>Response:</h3>
-        <pre>{{ response_text }}</pre>
+        <textarea placeholder="Response Body" class="body-text" readonly>
+{{ response_text }}
+        </textarea>
       </div>
     </div>
-  </template>
-  
-  
-  <script>
-  import axios from 'axios'
-  
-  export default {
-    data() {
-      return {
-        currentTab: '',
-        tabs: [
-          { id: 'ae', name: 'AE' },
-          { id: 'container', name: 'Container' },
-          { id: 'contentInstance', name: 'Content Instance' },
-          { id: 'subscription', name: 'Subscription' }
-        ],
-        res_name: '',
-        data_obj: {
-          Platform_addr: '127.0.0.1:3000',
-          Res_Id: 'TinyIoT',
-          X_M2M_RI: '12345',
-          X_M2M_RVI: '2a',
-          X_M2M_Origin: 'CAdmin',
-          Accept: 'application/json',
-  
-          lbl: '',
-          mni: '',
-          mbs: '',
-          ty: '',
-          op: '',
-          api: '',
-          rr: true,
-          con: '',
-          rn: '',
-          nu: '',
-          enc: '',
-          exc: '10',
-          net: [3, 4],
-          poa: [],
-          cb: '',
-          csi: '',
-          srv: ['1', '2', '2a'],
-          pv_acr: [],
-          pvs_acr: [],
-          mid: [],
-          mnm: '',
-          mt: '',
-          csy: '',
+  </div>
+</template>
+
+<script>
+import axios from "axios";
+
+export default {
+  data() {
+    return {
+      data_obj: {
+        Platform_addr: "127.0.0.1:3000",
+        Res_Id: "TinyIoT",
+        X_M2M_RI: "12345",
+        X_M2M_Origin: "CAdmin",
+        X_M2M_RVI: "2a", // 기본값 설정 가능
+        Accept: "application/json",
+        rn: "",
+      },
+      res_items: [
+        {
+          'X-M2M-RI': '',
+          'X-M2M-RSC': '',
+          'X-M2M-RVI': '',
+          'Content-Length': '',
+          'Content-Type': '',
         },
-        req_fields: [
-          { key: 'X-M2M-RI', class: 'text-center' },
-          { key: 'X-M2M-Origin', class: 'text-center' },
-          { key: 'X-M2M-RVI', class: 'text-center' },
-          { key: 'Content-Type', class: 'text-center' },
-          { key: 'Accept', class: 'text-center' },
-        ],
-        req_items: [
-          { 'X-M2M-RI': '', 'X-M2M-Origin': '', 'X-M2M-RVI': '', 'Content-Type': '', Accept: '' },
-        ],
-        res_fields: [
-          { key: 'X-M2M-RI', class: 'text-center' },
-          { key: 'X-M2M-RSC', class: 'text-center' },
-          { key: 'X-M2M-RVI', class: 'text-center' },
-          { key: 'Content-Length', class: 'text-center' },
-          { key: 'Content-Type', class: 'text-center' },
-        ],
-        res_items: [
-          {
-            'X-M2M-RI': '',
-            'X-M2M-RSC': '',
-            'X-M2M-RVI': '',
-            'Content-Length': '',
-            'Content-Type': '',
-          },
-        ],
-        headers_text: '',
-        query_Params: '',
-        request_text: '',
-        response_text: '',
-        res_mess: '',
-        res_errmess: '',
-        res_status: '',
-      }
+      ],
+      request_text: {},
+      response_text: '',
+    };
+  },
+  methods: {
+    handleDelete() {
+      this.delete_request();
     },
-    methods: {
-      handleDelete() {
-        this.delete_request()
-      },
-      delete_request() {
-        let resourcePath = this.getResourcePath()
-        let url = `http://${this.data_obj.Platform_addr}/${this.data_obj.Res_Id}${resourcePath}`
-        
-        const headers = {
-          'X-M2M-RI': this.data_obj.X_M2M_RI,
-          'X-M2M-Origin': this.data_obj.X_M2M_Origin,
-          'Accept': this.data_obj.Accept
-        }
-  
-        axios.delete(url, { headers })
-          .then((response) => {
-            this.response_text = 'Resource has been deleted successfully.'
-            this.res_status = response.status
-          })
-          .catch((error) => {
-            this.response_text = `Delete Failed: ${error.response?.data || error.message}`
-            this.res_status = error.response?.status
-          })
-      },
-      getResourcePath() {
-        // 리소스 타입에 따른 경로 생성
-        switch (this.currentTab) {
-          case 'ae':
-            return `/${this.data_obj.rn}`
-          case 'container':
-            return `/${this.data_obj.rn}`
-          case 'contentInstance':
-            return `/${this.data_obj.rn}`
-          case 'subscription':
-            return `/${this.data_obj.rn}`
-          default:
-            return ''
-        }
-      },
-    },
-  }
-  </script>
+    delete_request() {
+      let url = `http://${this.data_obj.Platform_addr}/${this.data_obj.Res_Id}/${this.data_obj.rn}`;
+
+      const headers = {
+        'X-M2M-RI': this.data_obj.X_M2M_RI,
+        'X-M2M-Origin': this.data_obj.X_M2M_Origin,
+        'X-M2M-RVI': this.data_obj.X_M2M_RVI, // X-M2M-RVI 추가
+        'Accept': this.data_obj.Accept,
+      };
+
+      this.request_text = { headers };
+
+      axios.delete(url, { headers })
+        .then((response) => {
+          this.response_text = 'Resource has been deleted successfully.';
+          this.updateResponseHeaders(response.headers);
+        })
+        .catch((error) => {
+          // 실패 시 응답 바디 내용만 표시
+          this.response_text = error.response?.data
+            ? JSON.stringify(error.response.data, null, 2)
+            : error.message;
+          this.updateResponseHeaders(error.response?.headers || {});
+        });
+    }
+  },
+};
+</script>
 
 <style scoped>
-/* 기존 스타일 유지 */
-.delete-container {
-  padding-left: 280px;  /* Navbar 높이에 따라 조절 */
-  margin: 0 20px;     /* 좌우 여백 */
+.delete-resource {
+  width: 100%;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* 라벨과 입력 필드의 간격 조절 */
-.form-group {
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  /* 더 진한 글씨색 */
+}
+
+.entity-selection {
   display: flex;
-  align-items: center;
-  gap: 5px;          /* 라벨과 입력 필드 사이 간격 */
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.entity-button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  /* 버튼 텍스트를 굵게 설정 */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.entity-button:hover {
+  background-color: #0056b3;
+}
+
+.main-content {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  width: 100%;
+  max-width: 100%;
+}
+
+.form-section {
+  flex: 1;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.form-group {
   margin-bottom: 15px;
 }
 
-input {
-  flex: 1;            /* 남은 공간을 입력 필드가 차지 */
-  max-width: 300px;   /* 입력 필드의 최대 너비 제한 */
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-/* 다른 스타일들은 유지 */
 label {
-  min-width: 100px;
-  display: inline-block;
-  width: 150px;
-  margin-right: 10px;
-  color: #1a73e8;  /* Google Blue */
-  font-weight: 500;
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.5);  /* 텍스트 주변에 약간의 그림자 효과 */
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #333;
+  /* 더 진한 텍스트 색상 */
 }
 
-/* 다크 모드일 때의 스타일 */
-@media (prefers-color-scheme: dark) {
-  label {
-    color: #63b3ed;  /* 밝은 파란색 */
-  }
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  /* 입력 필드 텍스트 크기 */
+  color: #333;
+  /* 입력 텍스트 색상 */
+}
+
+input::placeholder {
+  color: #888;
+  /* 플레이스홀더 텍스트 색상 */
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 12px;
+  background-color: #007bff;
+  color: white;
+  font-size: 16px;
+  /* 버튼 텍스트 크기 증가 */
+  font-weight: bold;
+  /* 버튼 텍스트 굵게 */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.btn-submit:hover {
+  background-color: #0056b3;
+}
+
+.request-response {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.request,
+.response {
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+}
+
+.request h3,
+.response h3 {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  /* 제목 텍스트를 더 진하게 */
+  margin-bottom: 10px;
+}
+
+.header ul {
+  list-style: none;
+  padding: 0;
+}
+
+.body-text {
+  width: 100%;
+  height: 100px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  background-color: #ffffff;
+  resize: none;
+  color: #333;
+  /* 텍스트 색상 */
+  font-size: 14px;
+}
+
+textarea::placeholder {
+  color: #888;
+  /* 텍스트 에어리어 플레이스홀더 색상 */
 }
 </style>
