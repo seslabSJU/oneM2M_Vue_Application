@@ -392,15 +392,6 @@ export default {
       axios.post(url, body, { headers })
         .then((response) => {
           this.res_mess = response.data;
-          this.res_status = response.status;
-          let headers = {};
-          headers["X-M2M-RI"] = response.headers["X-M2M-RI"];
-          headers["X-M2M-RSC"] = response.headers["X-M2M-RSC"];
-          headers["X-M2M-RVI"] = response.headers["X-M2M-RVI"];
-          headers["Content-Length"] = response.headers["Content-Length"];
-          headers["Content-Type"] = response.headers["Content-Type"];
-          this.response_header_change(headers);
-
           return (this.response_text = JSON.stringify(
             this.res_mess,
             undefined,

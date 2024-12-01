@@ -106,16 +106,6 @@ export default {
         .get(url, { headers })
         .then((response) => {
           this.res_mess = response.data;
-          this.res_status = response.status;
-
-          let headers = {};
-          headers["X-M2M-RI"] = response.headers["x-m2m-ri"];
-          headers["X-M2M-RSC"] = response.headers["x-m2m-rsc"];
-          headers["X-M2M-RVI"] = response.headers["x-m2m-rvi"];
-          headers["Content-Length"] = response.headers["content-length"];
-          headers["Content-Type"] = response.headers["content-type"];
-          this.response_header_change(headers);
-
           return (this.response_text = JSON.stringify(
             this.res_mess,
             undefined,
@@ -129,7 +119,6 @@ export default {
           } else if (error.response.status === 404) {
             this.res_status = error.response.status;
           }
-
           return (this.response_text = this.res_errmess);
         });
     },
