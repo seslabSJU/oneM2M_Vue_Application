@@ -199,8 +199,8 @@ export default {
 
   // 에러 응답 처리를 위한 헬퍼 메소드
     handleError(error) {
-    this.res_errmess = error.response.data;
-    this.res_status = error.response.status;
+      this.res_errmess = error.response.data;
+      this.res_status = error.response.status;
 
       const headers = {
         "X-M2M-RI": error.response.headers["x-m2m-ri"],

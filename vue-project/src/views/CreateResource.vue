@@ -22,12 +22,24 @@
           <input type="text" id="resourceId" v-model="data_obj.Res_Id" />
         </div>
         <div class="form-group">
-          <label for="resourceName">Resource Name:</label>
-          <input type="text" id="resourceName" v-model="data_obj.rn" placeholder="Enter your Resource name" />
+          <label for="resourceName">{{ selectedEntity }} Resource Name:</label>
+          <input type="text" id="resourceName" v-model="data_obj.rn" :placeholder="`Enter your ${selectedEntity} Resource name`" />
         </div>
         <div class="form-group">
           <label for="label">Label:</label>
           <input type="text" id="label" v-model="data_obj.lbl" />
+        </div>
+
+        <!-- ContentInstance를 위한 con 입력 필드 -->
+        <div class="form-group" v-if="selectedEntity === 'ContentInstance'">
+          <label for="con">Content:</label>
+          <input type="text" id="con" v-model="data_obj.con" placeholder="Enter content value" />
+        </div>
+
+        <!-- Subscription을 위한 nu 입력 필드 -->
+        <div class="form-group" v-if="selectedEntity === 'Subscription'">
+          <label for="nu">Notification URI:</label>
+          <input type="text" id="nu" v-model="data_obj.nu" placeholder="Enter notification URI" />
         </div>
 
         <h3>Headers</h3>
@@ -59,7 +71,7 @@
               <li>Accept: {{ data_obj.Accept }}</li>
             </ul>
           </div>
-          <textarea placeholder="Request Body" class="body-text"></textarea>
+          <textarea placeholder="Request Body" class="body-text" v-model="request_text" readonly></textarea>
         </div>
         <div class="response">
           <h3>Response</h3>
@@ -73,7 +85,7 @@
               <li>Content-Type:</li>
             </ul>
           </div>
-          <textarea placeholder="Response Body" class="body-text" readonly></textarea>
+          <textarea placeholder="Response Body" class="body-text" v-model="response_text" readonly></textarea>
         </div>
       </div>
     </div>
@@ -270,8 +282,8 @@ export default {
       let sub_obj = {}
       sub_obj['m2m:sub'] = {}
       if (this.data_obj.rn != '') sub_obj['m2m:sub'].rn = this.data_obj.rn
-      if (this.data_obj.lbl != '') sub_obj['m2m:sub'].lbl = JSON.parse(this.data_obj.lbl)
-      if (this.data_obj.nu != '') sub_obj['m2m:sub'].nu = JSON.parse(this.data_obj.nu)
+      if (this.data_obj.lbl != '') sub_obj['m2m:sub'].lbl = this.data_obj.lbl.split(', ')
+      if (this.data_obj.nu != '') sub_obj['m2m:sub'].nu = this.data_obj.nu.split(', ')
       else alert('Enter Notification URI(nu)')
       if (this.data_obj.enc != '') {
         sub_obj['m2m:sub'].enc = {}
@@ -381,11 +393,11 @@ export default {
           this.res_mess = response.data;
           this.res_status = response.status;
           let headers = {};
-          headers["X-M2M-RI"] = response.headers["x-m2m-ri"];
-          headers["X-M2M-RSC"] = response.headers["x-m2m-rsc"];
-          headers["X-M2M-RVI"] = response.headers["x-m2m-rvi"];
-          headers["Content-Length"] = response.headers["content-length"];
-          headers["Content-Type"] = response.headers["content-type"];
+          headers["X-M2M-RI"] = response.headers["X-M2M-RI"];
+          headers["X-M2M-RSC"] = response.headers["X-M2M-RSC"];
+          headers["X-M2M-RVI"] = response.headers["X-M2M-RVI"];
+          headers["Content-Length"] = response.headers["Content-Length"];
+          headers["Content-Type"] = response.headers["Content-Type"];
           this.response_header_change(headers);
 
           return (this.response_text = JSON.stringify(
@@ -402,11 +414,11 @@ export default {
             this.res_status = error.response.status;
           }
           let headers = {};
-          headers["X-M2M-RI"] = error.response.headers["x-m2m-ri"];
-          headers["X-M2M-RSC"] = error.response.headers["x-m2m-rsc"];
-          headers["X-M2M-RVI"] = error.response.headers["x-m2m-rvi"];
-          headers["Content-Length"] = error.response.headers["content-length"];
-          headers["Content-Type"] = error.response.headers["content-type"];
+          headers["X-M2M-RI"] = error.response.headers["X-M2M-RI"];
+          headers["X-M2M-RSC"] = error.response.headers["X-M2M-RSC"];
+          headers["X-M2M-RVI"] = error.response.headers["X-M2M-RVI"];
+          headers["Content-Length"] = error.response.headers["Content-Length"];
+          headers["Content-Type"] = error.response.headers["Content-Type"];
           this.response_header_change(headers);
 
           return (this.response_text = this.res_errmess);
@@ -537,6 +549,9 @@ input::placeholder {
   list-style: none;
   padding: 0;
 }
+.header{
+  color: #333;
+}
 
 .body-text {
   width: 100%;
@@ -553,5 +568,6 @@ input::placeholder {
 
 textarea::placeholder {
   color: #888; /* 텍스트 에어리어 플레이스홀더 색상 */
+  height: fit-content;
 }
 </style>
