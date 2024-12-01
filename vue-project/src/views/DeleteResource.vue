@@ -91,7 +91,7 @@ export default {
       this.delete_request();
     },
     delete_request() {
-      let url = `http://${this.data_obj.Platform_addr}/${this.data_obj.Res_Id}/${this.data_obj.rn}`;
+      let url = `/${this.data_obj.Res_Id}/${this.data_obj.rn}`;
 
       const headers = {
         'X-M2M-RI': this.data_obj.X_M2M_RI,

@@ -200,7 +200,7 @@ export default {
       ae_obj['m2m:ae'] = {}
 
       if (this.data_obj.rn != '') ae_obj['m2m:ae'].rn = this.data_obj.rn
-      if (this.data_obj.lbl.length > 0) ae_obj['m2m:ae'].lbl = JSON.parse(this.data_obj.lbl)
+      if (this.data_obj.lbl.length > 0) ae_obj['m2m:ae'].lbl = this.data_obj.lbl.split(', ')
       if (this.data_obj.api == '' || this.data_obj.rr == '') {
         alert('Enter app-Id(api) and requestReachability(rr)')
       } else {
@@ -227,7 +227,7 @@ export default {
       cnt_obj['m2m:cnt'] = {}
 
       if (this.data_obj.rn != '') cnt_obj['m2m:cnt'].rn = this.data_obj.rn
-      if (this.data_obj.lbl != '') cnt_obj['m2m:cnt'].lbl = JSON.parse(this.data_obj.lbl)
+      if (this.data_obj.lbl != '') cnt_obj['m2m:cnt'].lbl = this.data_obj.lbl.split(', ')
       if (this.data_obj.mni != '') cnt_obj['m2m:cnt'].mni = parseInt(this.data_obj.mni)
       if (this.data_obj.mbs != '') cnt_obj['m2m:cnt'].mbs = parseInt(this.data_obj.mbs)
 
@@ -249,7 +249,7 @@ export default {
       let cin_obj = {}
       cin_obj['m2m:cin'] = {}
 
-      if (this.data_obj.lbl != '') cin_obj['m2m:cin'].lbl = JSON.parse(this.data_obj.lbl)
+      if (this.data_obj.lbl != '') cin_obj['m2m:cin'].lbl = this.data_obj.lbl.split(', ')
       if (this.data_obj.con != '') cin_obj['m2m:cin'].con = this.data_obj.con
 
       this.data_obj['Content-Type'] = 'application/json;ty=4'
@@ -270,12 +270,12 @@ export default {
       let sub_obj = {}
       sub_obj['m2m:sub'] = {}
       if (this.data_obj.rn != '') sub_obj['m2m:sub'].rn = this.data_obj.rn
-      if (this.data_obj.lbl != '') sub_obj['m2m:sub'].lbl = JSON.parse(this.data_obj.lbl)
-      if (this.data_obj.nu != '') sub_obj['m2m:sub'].nu = JSON.parse(this.data_obj.nu)
+      if (this.data_obj.lbl != '') sub_obj['m2m:sub'].lbl = this.data_obj.lbl.split(', ')
+      if (this.data_obj.nu != '') sub_obj['m2m:sub'].nu = this.data_obj.lbl.split(', ')
       else alert('Enter Notification URI(nu)')
       if (this.data_obj.enc != '') {
         sub_obj['m2m:sub'].enc = {}
-        sub_obj['m2m:sub'].enc.net = JSON.parse(this.data_obj.enc)
+        sub_obj['m2m:sub'].enc.net = this.data_obj.net
       }
       if (this.data_obj.exc != '') sub_obj['m2m:sub'].exc = parseInt(this.data_obj.exc)
 
@@ -366,7 +366,7 @@ export default {
       return (this.request_text = JSON.stringify(this.req_display_obj, undefined, 2))
     },
     post_request() {
-      let url = "/" + this.data_obj.Res_Id;
+      let url = `/${this.data_obj.Res_Id}`;
       const headers = {
         "X-M2M-RI": this.data_obj.X_M2M_RI,
         "X-M2M-Origin": this.data_obj.X_M2M_Origin,
