@@ -59,21 +59,11 @@
               <li>Accept: {{ data_obj.Accept }}</li>
             </ul>
           </div>
-          <textarea placeholder="Request Body" class="body-text"></textarea>
+          <textarea placeholder="Request Body" class="body-text" v-model="request_text" readonly></textarea>
         </div>
         <div class="response">
           <h3>Response</h3>
-          <div class="header">
-            <p>Header</p>
-            <ul>
-              <li>X-M2M-RI:</li>
-              <li>X-M2M-RSC:</li>
-              <li>X-M2M-RVI:</li>
-              <li>Content-Length:</li>
-              <li>Content-Type:</li>
-            </ul>
-          </div>
-          <textarea placeholder="Response Body" class="body-text" readonly></textarea>
+          <textarea placeholder="Response Body" class="body-text" v-model="response_text" readonly></textarea>
         </div>
       </div>
     </div>
@@ -271,7 +261,7 @@ export default {
       sub_obj['m2m:sub'] = {}
       if (this.data_obj.rn != '') sub_obj['m2m:sub'].rn = this.data_obj.rn
       if (this.data_obj.lbl != '') sub_obj['m2m:sub'].lbl = this.data_obj.lbl.split(', ')
-      if (this.data_obj.nu != '') sub_obj['m2m:sub'].nu = this.data_obj.lbl.split(', ')
+      if (this.data_obj.nu != '') sub_obj['m2m:sub'].nu = this.data_obj.nu.split(', ')
       else alert('Enter Notification URI(nu)')
       if (this.data_obj.enc != '') {
         sub_obj['m2m:sub'].enc = {}
@@ -381,11 +371,11 @@ export default {
           this.res_mess = response.data;
           this.res_status = response.status;
           let headers = {};
-          headers["X-M2M-RI"] = response.headers["x-m2m-ri"];
-          headers["X-M2M-RSC"] = response.headers["x-m2m-rsc"];
-          headers["X-M2M-RVI"] = response.headers["x-m2m-rvi"];
-          headers["Content-Length"] = response.headers["content-length"];
-          headers["Content-Type"] = response.headers["content-type"];
+          headers["X-M2M-RI"] = response.headers["X-M2M-RI"];
+          headers["X-M2M-RSC"] = response.headers["X-M2M-RSC"];
+          headers["X-M2M-RVI"] = response.headers["X-M2M-RVI"];
+          headers["Content-Length"] = response.headers["Content-Length"];
+          headers["Content-Type"] = response.headers["Content-Type"];
           this.response_header_change(headers);
 
           return (this.response_text = JSON.stringify(
@@ -402,11 +392,11 @@ export default {
             this.res_status = error.response.status;
           }
           let headers = {};
-          headers["X-M2M-RI"] = error.response.headers["x-m2m-ri"];
-          headers["X-M2M-RSC"] = error.response.headers["x-m2m-rsc"];
-          headers["X-M2M-RVI"] = error.response.headers["x-m2m-rvi"];
-          headers["Content-Length"] = error.response.headers["content-length"];
-          headers["Content-Type"] = error.response.headers["content-type"];
+          headers["X-M2M-RI"] = error.response.headers["X-M2M-RI"];
+          headers["X-M2M-RSC"] = error.response.headers["X-M2M-RSC"];
+          headers["X-M2M-RVI"] = error.response.headers["X-M2M-RVI"];
+          headers["Content-Length"] = error.response.headers["Content-Length"];
+          headers["Content-Type"] = error.response.headers["Content-Type"];
           this.response_header_change(headers);
 
           return (this.response_text = this.res_errmess);
@@ -424,6 +414,10 @@ export default {
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header{
+  color: #333;
 }
 
 h2 {
@@ -552,6 +546,7 @@ input::placeholder {
 }
 
 textarea::placeholder {
+  height: fit-content;
   color: #888; /* 텍스트 에어리어 플레이스홀더 색상 */
 }
 </style>
