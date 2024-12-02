@@ -64,6 +64,7 @@ nav {
 @media screen and (min-width: 1200px) {
   nav {
     height: 100vh;
+    width: 100px;
   }
 }
 @media screen and (max-width: 1199px) {

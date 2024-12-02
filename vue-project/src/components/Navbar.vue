@@ -60,10 +60,12 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 200px;
+  width: 100px;
+  height: 100vh;
   background: #fff;
   padding: 1rem;
-  display:flex;
+  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: space-between;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
