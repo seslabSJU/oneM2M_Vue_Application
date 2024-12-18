@@ -15,8 +15,8 @@
       </div>
 
       <div class="nav-links" :class="{ 'active': isMenuOpen }">
-        <router-link 
-          v-for="item in menuItems" 
+        <router-link
+          v-for="item in menuItems"
           :key="item.path"
           :to="item.path"
           class="nav-item"
@@ -27,7 +27,7 @@
       </div>
     </nav>
   </template>
-  
+
   <script>
   export default {
     name: 'SideNavbar',
@@ -54,89 +54,81 @@
     }
   }
   </script>
-  
+
   <style scoped>
   .navbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 200px;
-  background: #fff;
-  padding: 1rem;
-  display:flex;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  z-index: 1000;
-}
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 100vh;
+    background: #fff;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    z-index: 1000;
+  }
 
-.nav-start {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+  .nav-start {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
 
-.nav-title {
-  display: none;
-}
-  
+  .nav-title {
+    display: none;
+  }
+
   .logo-container {
     display: block;
-    padding: 0 20px;
-    margin-bottom: 30px;
+    padding: 10px 0;
+    margin-bottom: 20px;
     text-align: center;
-    align-items: center;
   }
-  
+
   .logo-container h2 {
     color: #42b983;
     margin: 0;
+    font-size: 24px;
   }
-  
+
   .nav-links {
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    width: 100%;
+    margin-left: -1rem;
+    margin-right: -1rem;
   }
 
-  .nav-links a {
-    text-decoration: none;
-    color: #333;
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    transition: background-color 0.3s;
-  }
-
-  .nav-links a:hover {
-  background-color: #f0f0f0;
-}
-  
   .nav-item {
     display: block;
+    width: 100%;
     padding: 12px 20px;
-    color: white;
+    color: #333;
     text-decoration: none;
     transition: all 0.3s ease;
-    align-items: top;
+    border-left: 4px solid transparent;
   }
-  
+
   .nav-item:hover {
     background-color: #34495e;
+    color: white;
     padding-left: 25px;
   }
-  
+
   .nav-item.active {
     background-color: #42b983;
+    color: white;
     border-left: 4px solid white;
   }
 
   .menu-icon {
     display: none;
-  flex-direction: column;
-  gap: 5px;
-  cursor: pointer;
-  padding: 10px;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 10px;
   }
 
   .menu-icon span {
@@ -149,81 +141,68 @@
 
   @media (max-width: 1200px) {
     .nav-start {
-    order: 1;
-    margin-right: auto;
+      order: 1;
+      margin-right: auto;
+    }
+
+    .nav-title {
+      display: block;
+      order: 2;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #42b983;
+    }
+
+    .navbar {
+      height: auto;
+      width: 100%;
+      flex-direction: row;
+      align-items: center;
+      padding: 1rem;
+    }
+
+    .logo-container {
+      display: none;
+    }
+
+    .menu-icon {
+      display: flex;
+      order: 1;
+    }
+
+    .nav-links {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      flex-direction: column;
+      padding: 1rem;
+      gap: 1rem;
+      display: none;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      margin: 0;
+    }
+
+    .nav-links.active {
+      display: flex;
+    }
+
+    .nav-links a {
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .menu-icon.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+
+    .menu-icon.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .menu-icon.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
   }
-
-  .nav-title {
-  display: block;
-  order: 2;
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #42b983;; /* 원하는 색상으로 변경 가능 */
-}
-
-  .navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background: #fff;
-    padding: 1rem;
-    display:flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    z-index: 1000;
-  }
-
-  .logo-container {
-    display: none;  /* 1400px 이하에서 로고 컨테이너 숨김 */
-  }
-
-  .menu-icon {
-    display: flex;
-    order: 1;
-  }
-
-  .nav-links {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: #fff;
-    flex-direction: column;
-    padding: 1rem;
-    gap: 1rem;
-    display: none;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    order: 3;
-  }
-
-  .nav-links.active {
-    display: flex;
-  }
-
-  .nav-links a {
-    padding: 1rem;
-    text-align: center;
-  }
-
-  /* 햄버거 메뉴 애니메이션 */
-  .menu-icon.active span:nth-child(1) {
-    transform: rotate(45deg) translate(5px, 5px);
-  }
-
-  .menu-icon.active span:nth-child(2) {
-    opacity: 0;
-  }
-
-  .menu-icon.active span:nth-child(3) {
-    transform: rotate(-45deg) translate(5px, -5px);
-  }
-
-  /* 로고 컨테이너 반응형 조정 */
-  .logo-container {
-    margin: 0 auto;
-  }
-
-}
   </style>
