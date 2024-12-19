@@ -8,6 +8,9 @@ import { RouterView } from 'vue-router'
       <Navbar />
       <router-view></router-view>
     </div>
+    <div class="iframe-container">
+      <iframe src="http://localhost:3000/notifications" frameborder="0"></iframe>
+    </div>
   </main>
 </template>
 
@@ -59,6 +62,18 @@ nav {
   overflow-y: auto; /* 스크롤 필요 시 활성화 */
   background-color: #f9f9f9; /* 메인 콘텐츠 배경색 */
   padding: 20px;
+}
+
+.iframe-container {
+  width: 40vw; /* 화면의 40%를 차지 */
+  height: 100vh;
+  border-left: 1px solid #ccc; /* 메인 콘텐츠와 구분선 */
+  background-color: white;
+}
+
+iframe {
+  width: 100%;
+  height: 100%;
 }
 
 @media screen and (min-width: 1200px) {

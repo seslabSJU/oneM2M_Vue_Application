@@ -3,7 +3,7 @@ import Create from '../views/CreateResource.vue'
 import Retrieve from '../views/RetrieveResource.vue'
 import Update from '../views/UpdateResource.vue'
 import Delete from '../views/DeleteResource.vue'
-
+import NotifyPage from '../views/NotifyPage.vue'
 const routes = [
   {
     path: '/',
@@ -28,7 +28,12 @@ const routes = [
     path: '/delete',
     name: 'Delete',
     component: Delete
-  }
+  },
+  {
+    path: '/notfications',
+    name: 'Notfiy',
+    component: NotifyPage
+  },
 ]
 
 const router = createRouter({
