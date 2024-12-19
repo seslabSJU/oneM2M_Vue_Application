@@ -29,13 +29,6 @@
           <label for="label">Label:</label>
           <input type="text" id="label" v-model="data_obj.lbl" placeholder="Enter labels (comma separated)" />
         </div>
-
-        <!-- Mandatory Resources -->
-         <div class="form-group" v-if="selectedEntity === 'AE'">
-            <label for="api">API:</label>
-            <input type="none" id="api" v-model="data_obj.api" readonly />
-         </div>
-
         <!-- ContentInstance를 위한 con 입력 필드 -->
         <div class="form-group" v-if="selectedEntity === 'ContentInstance'">
           <label for="con">Content:</label>
@@ -46,6 +39,35 @@
         <div class="form-group" v-if="selectedEntity === 'Subscription'">
           <label for="nu">Notification URI:</label>
           <input type="text" id="nu" v-model="data_obj.nu" placeholder="Enter notification URI" />
+        </div>
+
+        <!-- Mandatory Resources for AE-->
+        <!-- API -->
+        <div class="form-group" v-if="selectedEntity === 'AE'">
+          <label for="api">API:</label>
+          <input type="none" id="api" v-model="data_obj.api" readonly />
+        </div>
+         <!-- Request Reachability -->
+        <div class="form-group" v-if="selectedEntity === 'AE'">
+          <label for="rr">Request Reachability:</label>
+          <input type="none" id="rr" v-model="data_obj.rr" readonly />
+        </div>
+        <!-- Srv -->
+        <div class="form-group" v-if="selectedEntity === 'AE'">
+          <label for="srv">Supported Release Version:</label>
+          <input type="none" id="srv" v-model="data_obj.srv" readonly />
+        </div>
+
+        <!-- Mandatory Resources for Container -->
+        <!-- Mni -->
+        <div class="form-group" v-if="selectedEntity === 'Container'">
+          <label for="mni">Maximum number of instance</label>
+          <input type="none" id="mni" v-model="data_obj.mni" placeholder="Enter Maximum number of instance (Optional)"/>
+        </div>
+        <!-- Mbs -->
+        <div class="form-group" v-if="selectedEntity === 'Container'">
+          <label for="mbs">Maximum byte size</label>
+          <input type="none" id="mbs" v-model="data_obj.mbs" placeholder="Enter Maximum byte size (Optional)" />
         </div>
 
         <h3>Headers</h3>
@@ -217,8 +239,8 @@ export default {
       let ae_obj = {}
       ae_obj['m2m:ae'] = {}
 
-      if (this.data_obj.rn != '') ae_obj['m2m:ae'].rn = this.data_obj.rn
-      if (this.data_obj.lbl.length > 0) ae_obj['m2m:ae'].lbl = this.data_obj.lbl.split(', ')
+      if (this.data_obj.rn != '') ae_obj['m2m:ae'].rn = this.data_obj.rn.trim()
+      if (this.data_obj.lbl.length > 0) ae_obj['m2m:ae'].lbl = this.data_obj.lbl.split(',').trim()
       if (this.data_obj.api == '' || this.data_obj.rr == '') {
         alert('Enter app-Id(api) and requestReachability(rr)')
       } else {
@@ -244,8 +266,8 @@ export default {
       let cnt_obj = {}
       cnt_obj['m2m:cnt'] = {}
 
-      if (this.data_obj.rn != '') cnt_obj['m2m:cnt'].rn = this.data_obj.rn
-      if (this.data_obj.lbl != '') cnt_obj['m2m:cnt'].lbl = this.data_obj.lbl.split(', ')
+      if (this.data_obj.rn != '') cnt_obj['m2m:cnt'].rn = this.data_obj.rn.trim()
+      if (this.data_obj.lbl != '') cnt_obj['m2m:cnt'].lbl = this.data_obj.lbl.split(',').trim()
       if (this.data_obj.mni != '') cnt_obj['m2m:cnt'].mni = parseInt(this.data_obj.mni)
       if (this.data_obj.mbs != '') cnt_obj['m2m:cnt'].mbs = parseInt(this.data_obj.mbs)
 
@@ -267,8 +289,8 @@ export default {
       let cin_obj = {}
       cin_obj['m2m:cin'] = {}
 
-      if (this.data_obj.rn != '') cin_obj['m2m:cin'].rn = this.data_obj.rn
-      if (this.data_obj.lbl != '') cin_obj['m2m:cin'].lbl = this.data_obj.lbl.split(', ')
+      if (this.data_obj.rn != '') cin_obj['m2m:cin'].rn = this.data_obj.rn.trim()
+      if (this.data_obj.lbl != '') cin_obj['m2m:cin'].lbl = this.data_obj.lbl.split(',').trim()
       if (this.data_obj.con != '') cin_obj['m2m:cin'].con = this.data_obj.con
 
       this.data_obj['Content-Type'] = 'application/json;ty=4'
@@ -288,9 +310,9 @@ export default {
     createSubscriptionResource() {
       let sub_obj = {}
       sub_obj['m2m:sub'] = {}
-      if (this.data_obj.rn != '') sub_obj['m2m:sub'].rn = this.data_obj.rn
-      if (this.data_obj.lbl != '') sub_obj['m2m:sub'].lbl = this.data_obj.lbl.split(', ')
-      if (this.data_obj.nu != '') sub_obj['m2m:sub'].nu = this.data_obj.nu.split(', ')
+      if (this.data_obj.rn != '') sub_obj['m2m:sub'].rn = this.data_obj.rn.trim()
+      if (this.data_obj.lbl != '') sub_obj['m2m:sub'].lbl = this.data_obj.lbl.split(',').trim()
+      if (this.data_obj.nu != '') sub_obj['m2m:sub'].nu = this.data_obj.nu.split(',').trim()
       else alert('Enter Notification URI(nu)')
       if (this.data_obj.enc != '') {
         sub_obj['m2m:sub'].enc = {}
