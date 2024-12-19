@@ -61,19 +61,19 @@
       <div class="request-response">
         <div class="request">
           <h3>Request</h3>
-          <div class="header">
+         <!-- <div class="header">
             <p>Header</p>
             <ul>
               <li>X-M2M-RI: {{ data_obj.X_M2M_RI }}</li>
               <li>X-M2M-Origin: {{ data_obj.X_M2M_Origin }}</li>
               <li>Accept: {{ data_obj.Accept }}</li>
             </ul>
-          </div>
+          </div>-->
           <textarea placeholder="Request Body" class="body-text" v-model="request_text" readonly></textarea>
         </div>
         <div class="response">
           <h3>Response</h3>
-          <div class="header">
+          <!--<div class="header">
             <p>Header</p>
             <ul>
               <li>X-M2M-RI: {{ res_items[0]['X-M2M-RI'] }}</li>
@@ -82,7 +82,7 @@
               <li>Content-Length: {{ res_items[0]['Content-Length'] }}</li>
               <li>Content-Type: {{ res_items[0]['Content-Type'] }}</li>
             </ul>
-          </div>
+          </div>-->
           <textarea placeholder="Response Body" class="body-text" v-model="response_text" readonly></textarea>
         </div>
       </div>
@@ -422,7 +422,7 @@ input::placeholder {
 
 .body-text {
   width: 100%;
-  height: 100px;
+  height: 400px;
   margin-top: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;

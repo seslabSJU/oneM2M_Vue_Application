@@ -29,7 +29,6 @@
           <label for="label">Label:</label>
           <input type="text" id="label" v-model="data_obj.lbl" placeholder="Enter labels (comma separated)" />
         </div>
-
         <!-- ContentInstance를 위한 con 입력 필드 -->
         <div class="form-group" v-if="selectedEntity === 'ContentInstance'">
           <label for="con">Content:</label>
@@ -44,6 +43,35 @@
           <input type="text" id="nct" v-model="data_obj.nct" placeholder="Enter Notification Content Type"/>
           <label for="nct">Notification Content Event:</label>
           <input type="text" id="net" v-model="data_obj.net" placeholder="Enter Notification Event Type"/>
+        </div>
+
+        <!-- Mandatory Resources for AE-->
+        <!-- API -->
+        <div class="form-group" v-if="selectedEntity === 'AE'">
+          <label for="api">API:</label>
+          <input type="none" id="api" v-model="data_obj.api" readonly />
+        </div>
+         <!-- Request Reachability -->
+        <div class="form-group" v-if="selectedEntity === 'AE'">
+          <label for="rr">Request Reachability:</label>
+          <input type="none" id="rr" v-model="data_obj.rr" readonly />
+        </div>
+        <!-- Srv -->
+        <div class="form-group" v-if="selectedEntity === 'AE'">
+          <label for="srv">Supported Release Version:</label>
+          <input type="none" id="srv" v-model="data_obj.srv" readonly />
+        </div>
+
+        <!-- Mandatory Resources for Container -->
+        <!-- Mni -->
+        <div class="form-group" v-if="selectedEntity === 'Container'">
+          <label for="mni">Maximum number of instance</label>
+          <input type="none" id="mni" v-model="data_obj.mni" placeholder="Enter Maximum number of instance (Optional)"/>
+        </div>
+        <!-- Mbs -->
+        <div class="form-group" v-if="selectedEntity === 'Container'">
+          <label for="mbs">Maximum byte size</label>
+          <input type="none" id="mbs" v-model="data_obj.mbs" placeholder="Enter Maximum byte size (Optional)" />
         </div>
 
         <h3>Headers</h3>
@@ -67,19 +95,19 @@
       <div class="request-response">
         <div class="request">
           <h3>Request</h3>
-          <div class="header">
+          <!--<div class="header">
             <p>Header</p>
             <ul>
               <li>X-M2M-RI: {{ data_obj.X_M2M_RI }}</li>
               <li>X-M2M-Origin: {{ data_obj.X_M2M_Origin }}</li>
               <li>Accept: {{ data_obj.Accept }}</li>
             </ul>
-          </div>
+          </div>-->
           <textarea placeholder="Request Body" class="body-text" v-model="request_text" readonly></textarea>
         </div>
         <div class="response">
           <h3>Response</h3>
-          <div class="header">
+          <!--<div class="header">
             <p>Header</p>
             <ul>
               <li>X-M2M-RI:</li>
@@ -88,7 +116,7 @@
               <li>Content-Length:</li>
               <li>Content-Type:</li>
             </ul>
-          </div>
+          </div>-->
           <textarea placeholder="Response Body" class="body-text" v-model="response_text" readonly></textarea>
         </div>
       </div>
@@ -215,8 +243,8 @@ export default {
       let ae_obj = {}
       ae_obj['m2m:ae'] = {}
 
-      if (this.data_obj.rn != '') ae_obj['m2m:ae'].rn = this.data_obj.rn
-      if (this.data_obj.lbl.length > 0) ae_obj['m2m:ae'].lbl = this.data_obj.lbl.split(', ')
+      if (this.data_obj.rn != '') ae_obj['m2m:ae'].rn = this.data_obj.rn.trim()
+      if (this.data_obj.lbl.length > 0) ae_obj['m2m:ae'].lbl = this.data_obj.lbl.split(',').trim()
       if (this.data_obj.api == '' || this.data_obj.rr == '') {
         alert('Enter app-Id(api) and requestReachability(rr)')
       } else {
@@ -242,8 +270,8 @@ export default {
       let cnt_obj = {}
       cnt_obj['m2m:cnt'] = {}
 
-      if (this.data_obj.rn != '') cnt_obj['m2m:cnt'].rn = this.data_obj.rn
-      if (this.data_obj.lbl != '') cnt_obj['m2m:cnt'].lbl = this.data_obj.lbl.split(', ')
+      if (this.data_obj.rn != '') cnt_obj['m2m:cnt'].rn = this.data_obj.rn.trim()
+      if (this.data_obj.lbl != '') cnt_obj['m2m:cnt'].lbl = this.data_obj.lbl.split(',').trim()
       if (this.data_obj.mni != '') cnt_obj['m2m:cnt'].mni = parseInt(this.data_obj.mni)
       if (this.data_obj.mbs != '') cnt_obj['m2m:cnt'].mbs = parseInt(this.data_obj.mbs)
 
@@ -265,8 +293,8 @@ export default {
       let cin_obj = {}
       cin_obj['m2m:cin'] = {}
 
-      if (this.data_obj.rn != '') cin_obj['m2m:cin'].rn = this.data_obj.rn
-      if (this.data_obj.lbl != '') cin_obj['m2m:cin'].lbl = this.data_obj.lbl.split(', ')
+      if (this.data_obj.rn != '') cin_obj['m2m:cin'].rn = this.data_obj.rn.trim()
+      if (this.data_obj.lbl != '') cin_obj['m2m:cin'].lbl = this.data_obj.lbl.split(',').trim()
       if (this.data_obj.con != '') cin_obj['m2m:cin'].con = this.data_obj.con
 
       this.data_obj['Content-Type'] = 'application/json;ty=4'
@@ -286,9 +314,9 @@ export default {
     createSubscriptionResource() {
       let sub_obj = {}
       sub_obj['m2m:sub'] = {}
-      if (this.data_obj.rn != '') sub_obj['m2m:sub'].rn = this.data_obj.rn
-      if (this.data_obj.lbl != '') sub_obj['m2m:sub'].lbl = this.data_obj.lbl.split(', ')
-      if (this.data_obj.nu != '') sub_obj['m2m:sub'].nu = this.data_obj.nu.split(', ')
+      if (this.data_obj.rn != '') sub_obj['m2m:sub'].rn = this.data_obj.rn.trim()
+      if (this.data_obj.lbl != '') sub_obj['m2m:sub'].lbl = this.data_obj.lbl.split(',').trim()
+      if (this.data_obj.nu != '') sub_obj['m2m:sub'].nu = this.data_obj.nu.split(',').trim()
       else alert('Enter Notification URI(nu)')
       if (this.data_obj.nct != '') sub_obj['m2m:sub'].nct = parseInt(this.data_obj.nct)
       if (this.data_obj.enc != '') {
@@ -548,7 +576,7 @@ input::placeholder {
 
 .body-text {
   width: 100%;
-  height: 100px;
+  height: 400px;
   margin-top: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -563,5 +591,12 @@ textarea::placeholder {
   height: fit-content;
   color: #888; /* 텍스트 에어리어 플레이스홀더 색상 */
   height: fit-content;
+}
+
+/* 기존 input 스타일은 유지하고 아래 스타일을 추가합니다 */
+input[readonly] {
+  background-color: #ffffff;  /* 배경색 약간 어둡게 */
+  color: #a5a5a5;  /* 텍스트 색상 변경 */
+  cursor: not-allowed;  /* 커서 모양 변경 */
 }
 </style>
