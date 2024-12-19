@@ -39,9 +39,11 @@
         <div class="form-group" v-if="selectedEntity === 'Subscription'">
           <label for="nu">Notification URI:</label>
           <input type="text" id="nu" v-model="data_obj.nu" placeholder="Enter notification URI" />
+
           <label for="nct">Notification Content Type:</label>
           <input type="text" id="nct" v-model="data_obj.nct" placeholder="Enter Notification Content Type"/>
-          <label for="nct">Notification Content Event:</label>
+
+          <label for="net">Notification Content Event:</label>
           <input type="text" id="net" v-model="data_obj.net" placeholder="Enter Notification Event Type"/>
         </div>
 
@@ -89,37 +91,39 @@
         </div>
 
         <button type="submit" class="btn-submit">Send</button>
-      </form>
-
       <!-- Request와 Response -->
-      <div class="request-response">
+        <div class="divider"/>
+
         <div class="request">
           <h3>Request</h3>
-          <!--<div class="header">
-            <p>Header</p>
-            <ul>
-              <li>X-M2M-RI: {{ data_obj.X_M2M_RI }}</li>
-              <li>X-M2M-Origin: {{ data_obj.X_M2M_Origin }}</li>
-              <li>Accept: {{ data_obj.Accept }}</li>
-            </ul>
-          </div>-->
+            <!--<div class="header">
+              <p>Header</p>
+              <ul>
+                <li>X-M2M-RI: {{ data_obj.X_M2M_RI }}</li>
+                <li>X-M2M-Origin: {{ data_obj.X_M2M_Origin }}</li>
+                <li>Accept: {{ data_obj.Accept }}</li>
+              </ul>
+            </div>-->
           <textarea placeholder="Request Body" class="body-text" v-model="request_text" readonly></textarea>
         </div>
+
+        <div class="divider"/>
+
         <div class="response">
           <h3>Response</h3>
-          <!--<div class="header">
-            <p>Header</p>
-            <ul>
-              <li>X-M2M-RI:</li>
-              <li>X-M2M-RSC:</li>
-              <li>X-M2M-RVI:</li>
-              <li>Content-Length:</li>
-              <li>Content-Type:</li>
-            </ul>
-          </div>-->
+            <!--<div class="header">
+              <p>Header</p>
+              <ul>
+                <li>X-M2M-RI:</li>
+                <li>X-M2M-RSC:</li>
+                <li>X-M2M-RVI:</li>
+                <li>Content-Length:</li>
+                <li>Content-Type:</li>
+              </ul>
+            </div>-->
           <textarea placeholder="Response Body" class="body-text" v-model="response_text" readonly></textarea>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 </template>
@@ -244,7 +248,12 @@ export default {
       ae_obj['m2m:ae'] = {}
 
       if (this.data_obj.rn != '') ae_obj['m2m:ae'].rn = this.data_obj.rn.trim()
-      if (this.data_obj.lbl.length > 0) ae_obj['m2m:ae'].lbl = this.data_obj.lbl.split(',').trim()
+      if (this.data_obj.lbl != '') {
+        ae_obj['m2m:ae'].lbl = this.data_obj.lbl
+          .split(',')
+          .map(item => item.trim())
+          .filter(item => item !== '');
+      }
       if (this.data_obj.api == '' || this.data_obj.rr == '') {
         alert('Enter app-Id(api) and requestReachability(rr)')
       } else {
@@ -271,7 +280,12 @@ export default {
       cnt_obj['m2m:cnt'] = {}
 
       if (this.data_obj.rn != '') cnt_obj['m2m:cnt'].rn = this.data_obj.rn.trim()
-      if (this.data_obj.lbl != '') cnt_obj['m2m:cnt'].lbl = this.data_obj.lbl.split(',').trim()
+      if (this.data_obj.lbl != '') {
+        cnt_obj['m2m:cnt'].lbl = this.data_obj.lbl
+          .split(',')
+          .map(item => item.trim())
+          .filter(item => item !== '')
+      }
       if (this.data_obj.mni != '') cnt_obj['m2m:cnt'].mni = parseInt(this.data_obj.mni)
       if (this.data_obj.mbs != '') cnt_obj['m2m:cnt'].mbs = parseInt(this.data_obj.mbs)
 
@@ -294,7 +308,12 @@ export default {
       cin_obj['m2m:cin'] = {}
 
       if (this.data_obj.rn != '') cin_obj['m2m:cin'].rn = this.data_obj.rn.trim()
-      if (this.data_obj.lbl != '') cin_obj['m2m:cin'].lbl = this.data_obj.lbl.split(',').trim()
+      if (this.data_obj.lbl != '') {
+        cin_obj['m2m:cin'].lbl = this.data_obj.lbl
+          .split(',')
+          .map(item => item.trim())
+          .filter(item => item !== '')
+      }
       if (this.data_obj.con != '') cin_obj['m2m:cin'].con = this.data_obj.con
 
       this.data_obj['Content-Type'] = 'application/json;ty=4'
@@ -315,13 +334,26 @@ export default {
       let sub_obj = {}
       sub_obj['m2m:sub'] = {}
       if (this.data_obj.rn != '') sub_obj['m2m:sub'].rn = this.data_obj.rn.trim()
-      if (this.data_obj.lbl != '') sub_obj['m2m:sub'].lbl = this.data_obj.lbl.split(',').trim()
-      if (this.data_obj.nu != '') sub_obj['m2m:sub'].nu = this.data_obj.nu.split(',').trim()
+      if (this.data_obj.lbl != '') {
+        sub_obj['m2m:sub'].lbl = this.data_obj.lbl
+          .split(',')
+          .map(item => item.trim())
+          .filter(item => item !== '')
+      }
+      if (this.data_obj.nu != '') {
+        sub_obj['m2m:sub'].nu = this.data_obj.nu
+          .split(',')
+          .map(item => item.trim())
+          .filter(item => item !== '')
+      }
       else alert('Enter Notification URI(nu)')
       if (this.data_obj.nct != '') sub_obj['m2m:sub'].nct = parseInt(this.data_obj.nct)
       if (this.data_obj.enc != '') {
         sub_obj['m2m:sub'].enc = {}
-        sub_obj['m2m:sub'].enc.net = this.data_obj.net.split(', ')
+        sub_obj['m2m:sub'].enc.net = this.data_obj.net
+          .split(',')
+          .map(item => item.trim())
+          .filter(item => item !== '')
       }
       if (this.data_obj.exc != '') sub_obj['m2m:sub'].exc = parseInt(this.data_obj.exc)
 
@@ -347,8 +379,14 @@ export default {
       else alert('Enter Callback URI(cb)') // not quite sure about this
       if (this.data_obj.rr != '') csr_obj['m2m:csr'].rr = this.data_obj.rr
       if (this.data_obj.csi != '') csr_obj['m2m:csr'].csi = this.data_obj.csi
-      if (this.data_obj.poa.length > 0) csr_obj['m2m:csr'].poa = this.data_obj.poa.split(', ')
-      if (this.data_obj.srv.length > 0) csr_obj['m2m:csr'].srv = this.data_obj.srv.split(', ')
+      if (this.data_obj.poa.length > 0) csr_obj['m2m:csr'].poa = this.data_obj.poa
+          .split(',')
+          .map(item => item.trim())
+          .filter(item => item !== '')
+      if (this.data_obj.srv.length > 0) csr_obj['m2m:csr'].srv = this.data_obj.srv
+          .split(',')
+          .map(item => item.trim())
+          .filter(item => item !== '')
 
       this.data_obj['Content-Type'] = 'application/json;ty=16'
       this.data_obj['Body'] = csr_obj
@@ -371,8 +409,14 @@ export default {
       acp_obj['m2m:acp'].pv = {}
       acp_obj['m2m:acp'].pvs = {}
       if(this.data_obj.rn != '') acp_obj['m2m:acp'].rn = this.data_obj.rn
-      acp_obj['m2m:acp'].pv.acr = this.data_obj.pv_acr.split(', ')
-      acp_obj['m2m:acp'].pvs.acr = this.data_obj.pvs_acr.split(', ')
+      acp_obj['m2m:acp'].pv.acr = this.data_obj.pv_acr
+          .split(',')
+          .map(item => item.trim())
+          .filter(item => item !== '')
+      acp_obj['m2m:acp'].pvs.acr = this.data_obj.pvs_acr
+          .split(',')
+          .map(item => item.trim())
+          .filter(item => item !== '')
 
       this.data_obj['Content-Type'] = 'application/json;ty=1'
       this.data_obj['Body'] = acp_obj
@@ -392,7 +436,10 @@ export default {
       let grp_obj = {}
       grp_obj['m2m:grp'] = {}
       if(this.data_obj.rn != '') grp_obj['m2m:grp'].rn = this.data_obj.rn
-      if(this.data_obj.mid.length > 0) grp_obj['m2m:grp'].mid = this.data_obj.mid.split(', ')
+      if(this.data_obj.mid.length > 0) grp_obj['m2m:grp'].mid = this.data_obj.mid
+          .split(',')
+          .map(item => item.trim())
+          .filter(item => item !== '')
       if(this.data_obj.mnm != '') grp_obj['m2m:grp'].mnm = this.data_obj.mnm
       if(this.data_obj.mt != '') grp_obj['m2m:grp'].mt = this.data_obj.mt
       if(this.data_obj.csy != '') grp_obj['m2m:grp'].csy = this.data_obj.csy
@@ -543,26 +590,19 @@ input::placeholder {
   background-color: #0056b3;
 }
 
-.request-response {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
 .request,
 .response {
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  background-color: #cccccc;
 }
 
 .request h3,
 .response h3 {
   font-size: 16px;
   font-weight: bold;
-  color: #333; /* 제목 텍스트를 더 진하게 */
+  color: #3b3b3b; /* 제목 텍스트를 더 진하게 */
   margin-bottom: 10px;
 }
 
@@ -598,5 +638,12 @@ input[readonly] {
   background-color: #ffffff;  /* 배경색 약간 어둡게 */
   color: #a5a5a5;  /* 텍스트 색상 변경 */
   cursor: not-allowed;  /* 커서 모양 변경 */
+}
+
+.divider {
+  margin: 20px 0;
+  height: 1px;
+  background-color: #e0e0e0;
+  width: 100%;
 }
 </style>
