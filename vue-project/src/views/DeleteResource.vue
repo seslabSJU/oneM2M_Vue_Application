@@ -289,7 +289,7 @@ input::placeholder {
 
 input[readonly] {
   background-color: #ffffff;  /* 배경색 약간 어둡게 */
-  color: #a5a5a5;  /* 텍스트 색상 변경 */
+  color: #333;  /* 텍스트 색상 변경 */
   cursor: not-allowed;  /* 커서 모양 변경 */
 }
 

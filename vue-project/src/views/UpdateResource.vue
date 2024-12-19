@@ -178,6 +178,8 @@ export default {
   methods: {
     selectEntity(entity) {
       this.selectedEntity = entity;
+      this.data_obj.lbl = []
+      this.data_obj.Res_Id = 'TinyIoT'
       console.log(`Selected Entity: ${entity}`);
     },
     handleUpdate() {
@@ -216,7 +218,10 @@ export default {
     updateAE() {
         let ae_obj = {}
         ae_obj['m2m:ae'] = {}
-        if (this.data_obj.lbl != '') ae_obj['m2m:ae'].lbl = this.data_obj.lbl.split(', ')
+        if (this.data_obj.lbl != '') ae_obj['m2m:ae'].lbl = this.data_obj.lbl
+          .split(',')
+          .map(item => item.trim())
+          .filter(item => item !== '');
 
         this.data_obj.Body = ae_obj;
         this.data_obj['Content-Type'] = 'application/json;ty=2';
@@ -235,7 +240,10 @@ export default {
     updateContainer() {
         let cnt_obj = {}
         cnt_obj['m2m:cnt'] = {}
-        if (this.data_obj.lbl != '') cnt_obj['m2m:cnt'].lbl = this.data_obj.lbl.split(', ')
+        if (this.data_obj.lbl != '') cnt_obj['m2m:cnt'].lbl = this.data_obj.lbl
+          .split(',')
+          .map(item => item.trim())
+          .filter(item => item !== '');
 
         this.data_obj.Body = cnt_obj;
         this.data_obj['Content-Type'] = 'application/json;ty=3';
@@ -254,7 +262,10 @@ export default {
     updateSubscriptionResource() {
         let sub_obj = {}
         sub_obj['m2m:sub'] = {}
-        if (this.data_obj.nu != '') sub_obj['m2m:sub'].nu = this.data_obj.nu.split(', ')
+        if (this.data_obj.nu != '') sub_obj['m2m:sub'].nu = this.data_obj.nu.split
+          .split(',')
+          .map(item => item.trim())
+          .filter(item => item !== '');
         this.data_obj.Body = sub_obj;
         this.data_obj['Content-Type'] = 'application/json;ty=23';
 
@@ -462,7 +473,7 @@ input::placeholder {
 
 input[readonly] {
   background-color: #ffffff;  /* 배경색 약간 어둡게 */
-  color: #a5a5a5;  /* 텍스트 색상 변경 */
+  color: #333;  /* 텍스트 색상 변경 */
   cursor: not-allowed;  /* 커서 모양 변경 */
 }
 

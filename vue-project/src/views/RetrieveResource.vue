@@ -148,6 +148,7 @@ export default {
   methods: {
     selectEntity(entity) {
       this.selectedEntity = entity;
+      this.data_obj.Res_Id = 'TinyIoT'
       console.log(`Selected Entity: ${entity}`);
     },
     handleRetrieve() {
@@ -160,7 +161,7 @@ export default {
           console.log(this.retrieveContainer())
           break;
         case 'ContentInstance':
-          console.log(this.createContentInstance())
+          console.log(this.retrieveContentInstance())
           break;
         case 'Subscription':
           console.log(this.retrieveSubscriptionResource())
@@ -440,7 +441,7 @@ input::placeholder {
 
 input[readonly] {
   background-color: #ffffff;  /* 배경색 약간 어둡게 */
-  color: #a5a5a5;  /* 텍스트 색상 변경 */
+  color: #333;  /* 텍스트 색상 변경 */
   cursor: not-allowed;  /* 커서 모양 변경 */
 }
 
