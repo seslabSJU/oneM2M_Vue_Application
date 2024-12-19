@@ -352,7 +352,7 @@ export default {
         sub_obj['m2m:sub'].enc = {}
         sub_obj['m2m:sub'].enc.net = this.data_obj.net
           .split(',')
-          .map(item => item.trim())
+          .map(item => {item.trim(); item = parseInt(item);})
           .filter(item => item !== '')
       }
       if (this.data_obj.exc != '') sub_obj['m2m:sub'].exc = parseInt(this.data_obj.exc)
@@ -411,11 +411,9 @@ export default {
       if(this.data_obj.rn != '') acp_obj['m2m:acp'].rn = this.data_obj.rn
       acp_obj['m2m:acp'].pv.acr = this.data_obj.pv_acr
           .split(',')
-          .map(item => item.trim())
           .filter(item => item !== '')
       acp_obj['m2m:acp'].pvs.acr = this.data_obj.pvs_acr
           .split(',')
-          .map(item => item.trim())
           .filter(item => item !== '')
 
       this.data_obj['Content-Type'] = 'application/json;ty=1'
