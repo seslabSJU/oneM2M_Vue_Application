@@ -30,6 +30,12 @@
           <input type="text" id="label" v-model="data_obj.lbl" placeholder="Enter labels (comma separated)" />
         </div>
 
+        <!-- Mandatory Resources -->
+         <div class="form-group" v-if="selectedEntity === 'AE'">
+            <label for="api">API:</label>
+            <input type="none" id="api" v-model="data_obj.api" readonly />
+         </div>
+
         <!-- ContentInstance를 위한 con 입력 필드 -->
         <div class="form-group" v-if="selectedEntity === 'ContentInstance'">
           <label for="con">Content:</label>
@@ -558,5 +564,12 @@ textarea::placeholder {
   height: fit-content;
   color: #888; /* 텍스트 에어리어 플레이스홀더 색상 */
   height: fit-content;
+}
+
+/* 기존 input 스타일은 유지하고 아래 스타일을 추가합니다 */
+input[readonly] {
+  background-color: #ffffff;  /* 배경색 약간 어둡게 */
+  color: #a5a5a5;  /* 텍스트 색상 변경 */
+  cursor: not-allowed;  /* 커서 모양 변경 */
 }
 </style>
