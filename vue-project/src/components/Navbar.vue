@@ -7,11 +7,11 @@
           <span></span>
           <span></span>
         </div>
-        <span class="nav-title">TinyIoT</span>
+        <span class="nav-title">oneM2M</span>
       </div>
 
       <div class="logo-container">
-        <h2>TinyIoT</h2>
+        <h2>oneM2M</h2>
       </div>
 
       <div class="nav-links" :class="{ 'active': isMenuOpen }">
