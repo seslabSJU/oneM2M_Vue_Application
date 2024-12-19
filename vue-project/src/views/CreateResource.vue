@@ -40,6 +40,10 @@
         <div class="form-group" v-if="selectedEntity === 'Subscription'">
           <label for="nu">Notification URI:</label>
           <input type="text" id="nu" v-model="data_obj.nu" placeholder="Enter notification URI" />
+          <label for="nct">Notification Content Type:</label>
+          <input type="text" id="nct" v-model="data_obj.nct" placeholder="Enter Notification Content Type"/>
+          <label for="nct">Notification Content Event:</label>
+          <input type="text" id="net" v-model="data_obj.net" placeholder="Enter Notification Event Type"/>
         </div>
 
         <h3>Headers</h3>
@@ -286,9 +290,10 @@ export default {
       if (this.data_obj.lbl != '') sub_obj['m2m:sub'].lbl = this.data_obj.lbl.split(', ')
       if (this.data_obj.nu != '') sub_obj['m2m:sub'].nu = this.data_obj.nu.split(', ')
       else alert('Enter Notification URI(nu)')
+      if (this.data_obj.nct != '') sub_obj['m2m:sub'].nct = parseInt(this.data_obj.nct)
       if (this.data_obj.enc != '') {
         sub_obj['m2m:sub'].enc = {}
-        sub_obj['m2m:sub'].enc.net = this.data_obj.net
+        sub_obj['m2m:sub'].enc.net = this.data_obj.net.split(', ')
       }
       if (this.data_obj.exc != '') sub_obj['m2m:sub'].exc = parseInt(this.data_obj.exc)
 
