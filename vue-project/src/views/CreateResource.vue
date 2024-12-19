@@ -13,6 +13,7 @@
     <div class="main-content">
       <!-- 입력 폼 -->
       <form @submit.prevent="handleCreate" class="form-section">
+        <h2>Body</h2>
         <div class="form-group">
           <label for="platformAddress">Platform Address:</label>
           <input type="text" id="platformAddress" v-model="data_obj.Platform_addr" readonly />
@@ -76,7 +77,8 @@
           <input type="none" id="mbs" v-model="data_obj.mbs" placeholder="Enter Maximum byte size (Optional)" />
         </div>
 
-        <h3>Headers</h3>
+
+        <h2>Headers</h2>
         <div class="form-group">
           <label>X-M2M-RI:</label>
           <input type="text" v-model="data_obj.X_M2M_RI" />
@@ -106,8 +108,6 @@
             </div>-->
           <textarea placeholder="Request Body" class="body-text" v-model="request_text" readonly></textarea>
         </div>
-
-        <div class="divider"/>
 
         <div class="response">
           <h3>Response</h3>
@@ -596,6 +596,7 @@ input::placeholder {
   border: 1px solid #ddd;
   border-radius: 8px;
   background-color: #cccccc;
+  margin-top: 20px;
 }
 
 .request h3,
@@ -610,7 +611,7 @@ input::placeholder {
   list-style: none;
   padding: 0;
 }
-.header{
+.header, h3{
   color: #333;
 }
 
