@@ -4,6 +4,7 @@
 
     <!-- 입력 폼 -->
     <form @submit.prevent="handleDelete" class="form-section">
+      <h2>Destination</h2>
       <div class="form-group">
         <label>Platform Address:</label>
         <input type="text" v-model="data_obj.Platform_addr" readonly />
@@ -16,45 +17,57 @@
         <label>Resource Name to Delete:</label>
         <input type="text" v-model="data_obj.rn" placeholder="Enter Resource Name (ex. myAE/cnt_name/cni_name)" />
       </div>
+
+      <h2>Headers</h2>
+      <div class="form-group">
+        <label>X-M2M-RI:</label>
+        <input type="text" v-model="data_obj.X_M2M_RI" />
+      </div>
       <div class="form-group">
         <label>X-M2M-RVI:</label>
-        <input type="text" v-model="data_obj.X_M2M_RVI" placeholder="Enter X-M2M-RVI (e.g., 2a)" />
+        <input type="text" v-model="data_obj.X_M2M_RVI" readonly/>
+      </div>
+      <div class="form-group">
+        <label>X-M2M-Origin:</label>
+        <input type="text" v-model="data_obj.X_M2M_Origin" />
+      </div>
+      <div class="form-group">
+        <label>Accept:</label>
+        <input type="text" v-model="data_obj.Accept" readonly/>
       </div>
 
       <!-- 삭제 버튼 -->
       <button type="submit" class="btn-submit">Delete</button>
-    </form>
 
-    <!-- 요청 및 응답 표시 -->
-    <div class="request-response">
+      <div class="divider"/>
+
       <div class="request">
-        <h3>Request</h3>
-       <!--- <div class="header">
-          <p><strong>Header</strong></p>
-          <ul>
-            <li>X-M2M-RI: {{ data_obj.X_M2M_RI }}</li>
-            <li>X-M2M-Origin: {{ data_obj.X_M2M_Origin }}</li>
-            <li>X-M2M-RVI: {{ data_obj.X_M2M_RVI }}</li>
-            <li>Accept: {{ data_obj.Accept }}</li>
-          </ul>
-        </div>-->
-        <textarea v-model="request_text" placeholder="Request Body" class="body-text" readonly/>
-      </div>
-      <div class="response">
-        <h3>Response</h3>
-        <!--<div class="header">
-          <p><strong>Header</strong></p>
-          <ul>
-            <li>X-M2M-RI: {{ res_items[0]['X-M2M-RI'] }}</li>
-            <li>X-M2M-RSC: {{ res_items[0]['X-M2M-RSC'] }}</li>
-            <li>X-M2M-RVI: {{ res_items[0]['X-M2M-RVI'] }}</li>
-            <li>Content-Length: {{ res_items[0]['Content-Length'] }}</li>
-            <li>Content-Type: {{ res_items[0]['Content-Type'] }}</li>
-          </ul>
-        </div>-->
-        <textarea v-model="response_text" placeholder="Response Body" class="body-text" readonly/>
-      </div>
-    </div>
+          <h3>Request</h3>
+         <!-- <div class="header">
+            <p>Header</p>
+            <ul>
+              <li>X-M2M-RI: {{ data_obj.X_M2M_RI }}</li>
+              <li>X-M2M-Origin: {{ data_obj.X_M2M_Origin }}</li>
+              <li>Accept: {{ data_obj.Accept }}</li>
+            </ul>
+          </div>-->
+          <textarea placeholder="Request Body" class="body-text" v-model="request_text" readonly></textarea>
+        </div>
+        <div class="response">
+          <h3>Response</h3>
+          <!--<div class="header">
+            <p>Header</p>
+            <ul>
+              <li>X-M2M-RI: {{ res_items[0]['X-M2M-RI'] }}</li>
+              <li>X-M2M-RSC: {{ res_items[0]['X-M2M-RSC'] }}</li>
+              <li>X-M2M-RVI: {{ res_items[0]['X-M2M-RVI'] }}</li>
+              <li>Content-Length: {{ res_items[0]['Content-Length'] }}</li>
+              <li>Content-Type: {{ res_items[0]['Content-Type'] }}</li>
+            </ul>
+          </div>-->
+          <textarea placeholder="Response Body" class="body-text" v-model="response_text" readonly></textarea>
+        </div>
+    </form>
   </div>
 </template>
 
@@ -265,6 +278,19 @@ input::placeholder {
   color: #333;
   /* 텍스트 색상 */
   font-size: 14px;
+}
+
+.divider {
+  margin: 20px 0;
+  height: 1px;
+  background-color: #e0e0e0;
+  width: 100%;
+}
+
+input[readonly] {
+  background-color: #ffffff;  /* 배경색 약간 어둡게 */
+  color: #a5a5a5;  /* 텍스트 색상 변경 */
+  cursor: not-allowed;  /* 커서 모양 변경 */
 }
 
 textarea::placeholder {

@@ -13,7 +13,7 @@
     <div class="main-content">
       <!-- 입력 폼 -->
       <form @submit.prevent="handleCreate" class="form-section">
-        <h2>Body</h2>
+        <h2>Destination</h2>
         <div class="form-group">
           <label for="platformAddress">Platform Address:</label>
           <input type="text" id="platformAddress" v-model="data_obj.Platform_addr" readonly />
@@ -22,6 +22,7 @@
           <label for="resourceId">Resource ID (To):</label>
           <input type="text" id="resourceId" v-model="data_obj.Res_Id" />
         </div>
+        <h2>Body</h2>
         <div class="form-group">
           <label for="resourceName">{{ selectedEntity }} Resource Name:</label>
           <input type="text" id="resourceName" v-model="data_obj.rn" :placeholder="`Enter your ${selectedEntity} Resource name`" />
@@ -40,10 +41,12 @@
         <div class="form-group" v-if="selectedEntity === 'Subscription'">
           <label for="nu">Notification URI:</label>
           <input type="text" id="nu" v-model="data_obj.nu" placeholder="Enter notification URI" />
-
+        </div>
+        <div class="form-group" v-if="selectedEntity === 'Subscription'">
           <label for="nct">Notification Content Type:</label>
           <input type="text" id="nct" v-model="data_obj.nct" placeholder="Enter Notification Content Type"/>
-
+        </div>
+        <div class="form-group" v-if="selectedEntity === 'Subscription'">
           <label for="net">Notification Content Event:</label>
           <input type="text" id="net" v-model="data_obj.net" placeholder="Enter Notification Event Type"/>
         </div>
@@ -84,12 +87,16 @@
           <input type="text" v-model="data_obj.X_M2M_RI" />
         </div>
         <div class="form-group">
+          <label>X-M2M-RVI:</label>
+          <input type="text" v-model="data_obj.X_M2M_RVI" readonly/>
+        </div>
+        <div class="form-group">
           <label>X-M2M-Origin:</label>
           <input type="text" v-model="data_obj.X_M2M_Origin" />
         </div>
         <div class="form-group">
           <label>Accept:</label>
-          <input type="text" v-model="data_obj.Accept" />
+          <input type="text" v-model="data_obj.Accept" readonly/>
         </div>
 
         <button type="submit" class="btn-submit">Send</button>

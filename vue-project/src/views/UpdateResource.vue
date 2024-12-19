@@ -16,6 +16,7 @@
     <div class="main-content">
       <!-- 입력 폼 -->
       <form @submit.prevent="handleUpdate" class="form-section">
+        <h2>Destination</h2>
         <div class="form-group">
           <label for="platformAddress">Platform Address:</label>
           <input type="text" id="platformAddress" v-model="data_obj.Platform_addr" readonly />
@@ -25,6 +26,7 @@
           <input type="text" id="resourceId" v-model="data_obj.Res_Id" />
         </div>
 
+        <h2>Body</h2>
         <!-- AE와 Container를 위한 Label 입력 필드 -->
         <div class="form-group" v-if="['AE', 'Container'].includes(selectedEntity)">
           <label for="label">Label:</label>
@@ -32,15 +34,19 @@
         </div>
 
         <!-- Subscription을 위한 nu 입력 필드 -->
-        <div class="form-group" v-if="current_resource_type === 'Subscription'">
+        <div class="form-group" v-if="selectedEntity === 'Subscription'">
           <label for="nu">Notification URI:</label>
           <input type="text" id="nu" v-model="data_obj.nu" placeholder="Enter notification URIs (comma separated)" />
         </div>
 
-        <h3>Headers</h3>
+        <h2>Headers</h2>
         <div class="form-group">
           <label>X-M2M-RI:</label>
           <input type="text" v-model="data_obj.X_M2M_RI" />
+        </div>
+        <div class="form-group">
+          <label>X-M2M-RVI:</label>
+          <input type="text" v-model="data_obj.X_M2M_RVI" readonly />
         </div>
         <div class="form-group">
           <label>X-M2M-Origin:</label>
@@ -48,14 +54,13 @@
         </div>
         <div class="form-group">
           <label>Accept:</label>
-          <input type="text" v-model="data_obj.Accept" />
+          <input type="text" v-model="data_obj.Accept" readonly />
         </div>
 
         <button type="submit" class="btn-submit">Update</button>
-      </form>
 
-      <!-- Request와 Response -->
-      <div class="request-response">
+        <div class="divider"/>
+
         <div class="request">
           <h3>Request</h3>
          <!-- <div class="header">
@@ -82,7 +87,7 @@
           </div>-->
           <textarea placeholder="Response Body" class="body-text" v-model="response_text" readonly></textarea>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 </template>
@@ -410,26 +415,20 @@ input::placeholder {
   background-color: #0056b3;
 }
 
-.request-response {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
 .request,
 .response {
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  background-color: #cccccc;
+  margin-top: 20px;
 }
 
 .request h3,
 .response h3 {
   font-size: 16px;
   font-weight: bold;
-  color: #333; /* 제목 텍스트를 더 진하게 */
+  color: #3b3b3b; /* 제목 텍스트를 더 진하게 */
   margin-bottom: 10px;
 }
 
@@ -452,6 +451,19 @@ input::placeholder {
   resize: none;
   color: #333; /* 텍스트 색상 */
   font-size: 14px;
+}
+
+.divider {
+  margin: 20px 0;
+  height: 1px;
+  background-color: #e0e0e0;
+  width: 100%;
+}
+
+input[readonly] {
+  background-color: #ffffff;  /* 배경색 약간 어둡게 */
+  color: #a5a5a5;  /* 텍스트 색상 변경 */
+  cursor: not-allowed;  /* 커서 모양 변경 */
 }
 
 textarea::placeholder {
