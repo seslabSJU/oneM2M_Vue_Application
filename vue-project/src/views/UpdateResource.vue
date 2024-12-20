@@ -302,7 +302,7 @@ export default {
             "X-M2M-RI": this.data_obj.X_M2M_RI,
             "X-M2M-Origin": this.data_obj.X_M2M_Origin,
             "X-M2M-RVI": this.data_obj.X_M2M_RVI,
-            "Content-Type": this.data_obj["Content-Type"],
+            "Content-Type": this.data_obj.Content_Type,
             "Accept": this.data_obj.Accept
         };
 
