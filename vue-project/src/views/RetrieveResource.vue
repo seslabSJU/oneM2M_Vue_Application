@@ -20,23 +20,23 @@
           <input type="text" id="platformAddress" v-model="data_obj.Platform_addr" readonly />
         </div>
         <div class="form-group" v-if="selectedEntity === 'AE'">
-          <label for="resourceId">Resource ID(TO) (ex. TinyIoT):</label>
+          <label for="resourceId">Resource ID(To) (ex. TinyIoT):</label>
           <input type="text" id="resourceId" v-model="data_obj.Res_Id" />
         </div>
         <div class="form-group" v-if="selectedEntity === 'Container'">
-          <label for="resourceId">Resource ID(TO) (ex. TinyIoT/AE_RN):</label>
+          <label for="resourceId">Resource ID(To) (ex. TinyIoT/AE_RN):</label>
           <input type="text" id="resourceId" v-model="data_obj.Res_Id" />
         </div>
         <div class="form-group" v-if="selectedEntity === 'ContentInstance'">
-          <label for="resourceId">Resource ID(TO) (ex. TinyIoT/AE_RN/CNT_RN):</label>
+          <label for="resourceId">Resource ID(To) (ex. TinyIoT/AE_RN/CNT_RN):</label>
           <input type="text" id="resourceId" v-model="data_obj.Res_Id" />
         </div>
         <div class="form-group" v-if="selectedEntity === 'Subscription'">
-          <label for="resourceId">Resource ID(TO) (ex. TinyIoT/AE_RN/CNT_RN):</label>
+          <label for="resourceId">Resource ID(To) (ex. TinyIoT/AE_RN/CNT_RN):</label>
           <input type="text" id="resourceId" v-model="data_obj.Res_Id" />
         </div>
         <div class="form-group">
-          <label for="resourceName">{{ selectedEntity }} Resource Name:</label>
+          <label for="resourceName">{{ selectedEntity }}_rn (Resource Name):</label>
           <input type="text" id="resourceName" v-model="data_obj.rn" :placeholder="`Enter your ${selectedEntity} Resource name`" />
         </div>
 
@@ -52,7 +52,7 @@
         </div>
         <div class="form-group">
           <label>X-M2M-Origin:</label>
-          <input type="text" v-model="data_obj.X_M2M_Origin" />
+          <input type="text" id="X-M2M-Origin" v-model="data_obj.X_M2M_Origin" :placeholder="'Enter the same originator that you entered when you created the resource'" />
         </div>
         <div class="form-group">
           <label>Accept:</label>
@@ -108,7 +108,7 @@ export default {
         Res_Id: 'TinyIoT',
         X_M2M_RI: "12345",
         X_M2M_RVI: "2a",
-        X_M2M_Origin: "CAdmin",
+        X_M2M_Origin: '',
         Accept: "application/json",
         Retrieve_text: "GET",
       },
@@ -149,6 +149,8 @@ export default {
     selectEntity(entity) {
       this.selectedEntity = entity;
       this.data_obj.Res_Id = 'TinyIoT'
+      this.data_obj.rn = ''
+      this.data_obj.X_M2M_Origin = ''
       console.log(`Selected Entity: ${entity}`);
     },
     handleRetrieve() {
@@ -440,7 +442,7 @@ input::placeholder {
 }
 
 input[readonly] {
-  background-color: #ffffff;  /* 배경색 약간 어둡게 */
+  background-color: #d4d2d2;  /* 배경색 약간 어둡게(아예 회색빛 넣어서 구분되게 만들었음!) */
   color: #333;  /* 텍스트 색상 변경 */
   cursor: not-allowed;  /* 커서 모양 변경 */
 }

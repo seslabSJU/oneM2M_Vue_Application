@@ -24,59 +24,60 @@
         </div>
         <h2>Body</h2>
         <div class="form-group">
-          <label for="resourceName">{{ selectedEntity }} Resource Name:</label>
+          <label for="resourceName">{{ selectedEntity }} RN (Resource Name):</label>
           <input type="text" id="resourceName" v-model="data_obj.rn" :placeholder="`Enter your ${selectedEntity} Resource name`" />
         </div>
         <div class="form-group" v-if="['AE', 'Container', 'ContentInstance'].includes(selectedEntity)">
-          <label for="label">Label:</label>
+          <label for="label">lbl (label):</label>
           <input type="text" id="label" v-model="data_obj.lbl" placeholder="Enter labels (comma separated)" />
         </div>
+
         <!-- ContentInstance를 위한 con 입력 필드 -->
         <div class="form-group" v-if="selectedEntity === 'ContentInstance'">
-          <label for="con">Content:</label>
+          <label class="required" for="con">con (Content):</label>
           <input type="text" id="con" v-model="data_obj.con" placeholder="Enter content value" />
         </div>
 
         <!-- Subscription을 위한 nu 입력 필드 -->
         <div class="form-group" v-if="selectedEntity === 'Subscription'">
-          <label for="nu">Notification URI:</label>
+          <label class="required" for="nu">nu (Notification URI):</label>
           <input type="text" id="nu" v-model="data_obj.nu" placeholder="Enter notification URI" />
         </div>
         <div class="form-group" v-if="selectedEntity === 'Subscription'">
-          <label for="nct">Notification Content Type:</label>
+          <label for="nct">nct (Notification Content Type):</label>
           <input type="text" id="nct" v-model="data_obj.nct" placeholder="Enter Notification Content Type"/>
         </div>
         <div class="form-group" v-if="selectedEntity === 'Subscription'">
-          <label for="net">Notification Content Event:</label>
+          <label class="required" for="net">net (Notification Event Type):</label>
           <input type="text" id="net" v-model="data_obj.net" placeholder="Enter Notification Event Type"/>
         </div>
 
         <!-- Mandatory Resources for AE-->
         <!-- API -->
         <div class="form-group" v-if="selectedEntity === 'AE'">
-          <label for="api">API:</label>
+          <label class="required" for="api">api (Application ID):</label>
           <input type="none" id="api" v-model="data_obj.api" readonly />
         </div>
          <!-- Request Reachability -->
         <div class="form-group" v-if="selectedEntity === 'AE'">
-          <label for="rr">Request Reachability:</label>
+          <label class="required" for="rr">rr (Request Reachability):</label>
           <input type="none" id="rr" v-model="data_obj.rr" readonly />
         </div>
         <!-- Srv -->
         <div class="form-group" v-if="selectedEntity === 'AE'">
-          <label for="srv">Supported Release Version:</label>
+          <label class="required" for="srv">srv (Supported Release Version):</label>
           <input type="none" id="srv" v-model="data_obj.srv" readonly />
         </div>
 
         <!-- Mandatory Resources for Container -->
         <!-- Mni -->
         <div class="form-group" v-if="selectedEntity === 'Container'">
-          <label for="mni">Maximum number of instance</label>
+          <label for="mni">mni (Maximum number of instance, Optional)</label>
           <input type="none" id="mni" v-model="data_obj.mni" placeholder="Enter Maximum number of instance (Optional)"/>
         </div>
         <!-- Mbs -->
         <div class="form-group" v-if="selectedEntity === 'Container'">
-          <label for="mbs">Maximum byte size</label>
+          <label for="mbs">mbs (Maximum byte size, Optional)</label>
           <input type="none" id="mbs" v-model="data_obj.mbs" placeholder="Enter Maximum byte size (Optional)" />
         </div>
 
@@ -92,7 +93,7 @@
         </div>
         <div class="form-group">
           <label>X-M2M-Origin:</label>
-          <input type="text" v-model="data_obj.X_M2M_Origin" />
+          <input type="text" id="X-M2M-Origin" v-model="data_obj.X_M2M_Origin" placeholder="Enter Originator starts with 'C' or 'N' or 'S'" />
         </div>
         <div class="form-group">
           <label>Accept:</label>
@@ -148,7 +149,7 @@ export default {
         Res_Id: 'TinyIoT',
         X_M2M_RI: 'create',
         X_M2M_RVI: '2a',
-        X_M2M_Origin: 'CAdmin',
+        X_M2M_Origin: '',
         Accept: 'application/json',
 
         lbl: [],
@@ -215,6 +216,7 @@ export default {
       this.data_obj.rn = ''
       this.data_obj.lbl = []
       this.data_obj.Res_Id = 'TinyIoT'
+      this.data_obj.X_M2M_Origin = ''
       console.log(`Selected Entity: ${entity}`);
     },
     handleCreate() {
@@ -644,7 +646,7 @@ textarea::placeholder {
 
 /* 기존 input 스타일은 유지하고 아래 스타일을 추가합니다 */
 input[readonly] {
-  background-color: #ffffff;  /* 배경색 약간 어둡게 */
+  background-color: #d4d2d2;  /* 배경색 약간 어둡게(아예 회색빛 넣어서 구분되게 만들었음!) */
   color: #333;  /* 텍스트 색상 변경 */
   cursor: not-allowed;  /* 커서 모양 변경 */
 }
@@ -654,5 +656,11 @@ input[readonly] {
   height: 1px;
   background-color: #e0e0e0;
   width: 100%;
+}
+
+.required::before {
+    content: '*';
+    color: red; /* 또는 원하는 색상 */
+    margin-right: 2px; /* 필요한 경우 여백 조정 */
 }
 </style>

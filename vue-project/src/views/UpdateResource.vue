@@ -29,13 +29,13 @@
         <h2>Body</h2>
         <!-- AE와 Container를 위한 Label 입력 필드 -->
         <div class="form-group" v-if="['AE', 'Container'].includes(selectedEntity)">
-          <label for="label">Label:</label>
+          <label for="label">lbl (Label):</label>
           <input type="text" id="label" v-model="data_obj.lbl" placeholder="Enter labels (comma separated)" />
         </div>
 
         <!-- Subscription을 위한 nu 입력 필드 -->
         <div class="form-group" v-if="selectedEntity === 'Subscription'">
-          <label for="nu">Notification URI:</label>
+          <label class="required" for="nu">nu (Notification URI):</label>
           <input type="text" id="nu" v-model="data_obj.nu" placeholder="Enter notification URIs (comma separated)" />
         </div>
 
@@ -50,7 +50,7 @@
         </div>
         <div class="form-group">
           <label>X-M2M-Origin:</label>
-          <input type="text" v-model="data_obj.X_M2M_Origin" />
+          <input type="text" id="X-M2M-Origin" v-model="data_obj.X_M2M_Origin" :placeholder="'Enter the same originator that you entered when you created the resource'" />
         </div>
         <div class="form-group">
           <label>Accept:</label>
@@ -106,7 +106,7 @@ export default {
         Res_Id: 'TinyIoT',
         X_M2M_RI: '12345',
         X_M2M_RVI: '2a',
-        X_M2M_Origin: 'CAdmin',
+        X_M2M_Origin: '',
         Accept: 'application/json',
 
         lbl: '',
@@ -180,6 +180,7 @@ export default {
       this.selectedEntity = entity;
       this.data_obj.lbl = []
       this.data_obj.Res_Id = 'TinyIoT'
+      this.data_obj.X_M2M_Origin = ''
       console.log(`Selected Entity: ${entity}`);
     },
     handleUpdate() {
@@ -472,7 +473,7 @@ input::placeholder {
 }
 
 input[readonly] {
-  background-color: #ffffff;  /* 배경색 약간 어둡게 */
+  background-color: #d4d2d2;  /* 배경색 약간 어둡게(아예 회색빛 넣어서 구분되게 만들었음!) */
   color: #333;  /* 텍스트 색상 변경 */
   cursor: not-allowed;  /* 커서 모양 변경 */
 }
@@ -481,5 +482,11 @@ textarea::placeholder {
   height: fit-content;
   color: #888; /* 텍스트 에어리어 플레이스홀더 색상 */
   height: fit-content;
+}
+
+.required::before {
+    content: '*';
+    color: red; /* 또는 원하는 색상 */
+    margin-right: 2px; /* 필요한 경우 여백 조정 */
 }
 </style>

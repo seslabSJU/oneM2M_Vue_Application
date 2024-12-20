@@ -15,7 +15,7 @@
       </div>
       <div class="form-group">
         <label>Resource Name to Delete:</label>
-        <input type="text" v-model="data_obj.rn" placeholder="Enter Resource Name (ex. myAE/cnt_name/cni_name)" />
+        <input type="text" v-model="data_obj.rn" placeholder="Enter Resource Name (ex. myAE/cnt_rn/cin_rn)" />
       </div>
 
       <h2>Headers</h2>
@@ -29,7 +29,7 @@
       </div>
       <div class="form-group">
         <label>X-M2M-Origin:</label>
-        <input type="text" v-model="data_obj.X_M2M_Origin" />
+        <input type="text" id="X-M2M-Origin" v-model="data_obj.X_M2M_Origin" :placeholder="'Enter the same originator that you entered when you created the resource'" />
       </div>
       <div class="form-group">
         <label>Accept:</label>
@@ -81,7 +81,7 @@ export default {
         Platform_addr: "127.0.0.1:3000",
         Res_Id: "TinyIoT",
         X_M2M_RI: "12345",
-        X_M2M_Origin: "CAdmin",
+        X_M2M_Origin: "",
         X_M2M_RVI: "2a", // 기본값 설정 가능
         Accept: "application/json",
         rn: "",
@@ -100,6 +100,15 @@ export default {
     };
   },
   methods: {
+    response_header_change(obj) {
+      console.log(obj)
+      this.res_items[0]['X-M2M-RI'] = obj['X-M2M-RI']
+      this.res_items[0]['X-M2M-RSC'] = obj['X-M2M-RSC']
+      this.res_items[0]['X-M2M-RVI'] = obj['X-M2M-RVI']
+      this.res_items[0]['Content-Length'] = obj['Content-Length']
+      this.res_items[0]['Content-Type'] = obj['Content-Type']
+      // this.$refs.restable.refresh()
+    },
     handleDelete() {
       this.delete_request();
     },
@@ -113,19 +122,23 @@ export default {
         'Accept': this.data_obj.Accept,
       };
 
-      this.request_text = { headers };
+      this.request_text = "Request is successfully sent";
+    
 
       axios.delete(url, { headers })
-        .then((response) => {
-          this.response_text = 'Resource has been deleted successfully.';
-          this.updateResponseHeaders(response.headers);
+      .then((response) => {
+          // HTTP 상태 라인 형식으로 response 메시지 수정
+          this.response_text = `HTTP/1.1 ${response.status} ${response.statusText}`;
+          this.response_header_change(response.headers);
+          return this.response_text
         })
         .catch((error) => {
-          // 실패 시 응답 바디 내용만 표시
-          this.response_text = error.response?.data
-            ? JSON.stringify(error.response.data, null, 2)
-            : error.message;
-          this.updateResponseHeaders(error.response?.headers || {});
+          // 에러 시에도 HTTP 상태 라인 형식 유지
+          this.response_text = error.response 
+            ? `HTTP/1.1 ${error.response.status} ${error.response.statusText}`
+            : `Error: ${error.message}`;
+          this.response_header_change(error.response?.headers || {});
+          return this.response_text
         });
     }
   },
@@ -268,7 +281,7 @@ input::placeholder {
 
 .body-text {
   width: 100%;
-  height: 400px;
+  height: 100px;
   margin-top: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -288,7 +301,7 @@ input::placeholder {
 }
 
 input[readonly] {
-  background-color: #ffffff;  /* 배경색 약간 어둡게 */
+  background-color: #d4d2d2;  /* 배경색 약간 어둡게(아예 회색빛 넣어서 구분되게 만들었음!) */
   color: #333;  /* 텍스트 색상 변경 */
   cursor: not-allowed;  /* 커서 모양 변경 */
 }
