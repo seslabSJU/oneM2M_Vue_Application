@@ -52,7 +52,7 @@
         </div>
         <div class="form-group">
           <label>X-M2M-Origin:</label>
-          <input type="text" id="X-M2M-Origin" v-model="data_obj.X_M2M_Origin" :placeholder="'Enter the same originator that you entered when you created the resource'" />
+          <input type="text" v-model="data_obj.X_M2M_Origin" readonly/>
         </div>
         <div class="form-group">
           <label>Accept:</label>
@@ -106,9 +106,9 @@ export default {
       data_obj: {
         Platform_addr: '127.0.0.1:3000',
         Res_Id: 'TinyIoT',
-        X_M2M_RI: "12345",
+        X_M2M_RI: "retrieve",
         X_M2M_RVI: "2a",
-        X_M2M_Origin: '',
+        X_M2M_Origin: 'CAdmin',
         Accept: "application/json",
         Retrieve_text: "GET",
       },
@@ -150,7 +150,7 @@ export default {
       this.selectedEntity = entity;
       this.data_obj.Res_Id = 'TinyIoT'
       this.data_obj.rn = ''
-      this.data_obj.X_M2M_Origin = ''
+      this.data_obj.X_M2M_Origin = 'CAdmin'
       console.log(`Selected Entity: ${entity}`);
     },
     handleRetrieve() {

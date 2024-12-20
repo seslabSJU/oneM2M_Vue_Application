@@ -72,12 +72,12 @@
         <!-- Mandatory Resources for Container -->
         <!-- Mni -->
         <div class="form-group" v-if="selectedEntity === 'Container'">
-          <label for="mni">mni (Maximum number of instance, Optional)</label>
+          <label for="mni">mni (Maximum Number of Instance, Optional)</label>
           <input type="none" id="mni" v-model="data_obj.mni" placeholder="Enter Maximum number of instance (Optional)"/>
         </div>
         <!-- Mbs -->
         <div class="form-group" v-if="selectedEntity === 'Container'">
-          <label for="mbs">mbs (Maximum byte size, Optional)</label>
+          <label for="mbs">mbs (Maximum Byte Size, Optional)</label>
           <input type="none" id="mbs" v-model="data_obj.mbs" placeholder="Enter Maximum byte size (Optional)" />
         </div>
 
@@ -93,7 +93,7 @@
         </div>
         <div class="form-group">
           <label>X-M2M-Origin:</label>
-          <input type="text" id="X-M2M-Origin" v-model="data_obj.X_M2M_Origin" placeholder="Enter Originator starts with 'C' or 'N' or 'S'" />
+          <input type="text" id="X-M2M-Origin" v-model="data_obj.X_M2M_Origin" placeholder="Enter Originator starts with 'C' or 'S'" />
         </div>
         <div class="form-group">
           <label>Content-Type:</label>
@@ -180,6 +180,7 @@ export default {
         mnm: '',
         mt: '',
         csy: '',
+        nct: '',
       },
       req_fields: [
         { key: 'X-M2M-RI', class: 'text-center' },
@@ -222,6 +223,12 @@ export default {
       this.data_obj.lbl = []
       this.data_obj.Res_Id = 'TinyIoT'
       this.data_obj.X_M2M_Origin = ''
+      this.data_obj.mni = ''
+      this.data_obj.mbs = ''
+      this.data_obj.net = [3, 4]
+      this.data_obj.nct = ''
+      this.data_obj.nu = ''
+      this.data_obj.con = ''
       switch(entity){
         case 'AE':
           this.data_obj.Content_Type = 'application/json;ty=2'
