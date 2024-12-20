@@ -1,88 +1,71 @@
 <template>
-    <div class="notify-page">
-      <h1>Notifications</h1>
-      <div v-if="notifications.length === 0" class="no-notifications">
-        No notifications available.
-      </div>
+  <div class="notify-page">
+    <h1>Notify Page</h1>
+    <div v-if="notifications.length > 0">
+      <h2>Received Notifications</h2>
       <ul>
-        <li
-          v-for="notification in notifications"
-          :key="notification.id"
-          :class="{ read: notification.read }"
-          @click="markAsRead(notification.id)"
-        >
-          <h3>{{ notification.title }}</h3>
-          <p>{{ notification.message }}</p>
-          <small>{{ formatDate(notification.timestamp) }}</small>
+        <li v-for="(notification, index) in notifications" :key="index">
+          <pre>{{ notification }}</pre>
         </li>
       </ul>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        notifications: [], // 알림 목록
-      };
-    },
-    methods: {
-      fetchNotifications() {
-        // 서버에서 알림 데이터를 가져오는 예제
-        // 실제 API 엔드포인트로 대체
-        fetch("/api/notifications")
-          .then((response) => response.json())
-          .then((data) => {
-            this.notifications = data;
-          });
-      },
-      markAsRead(id) {
-        // 알림을 읽음 상태로 변경
-        const notification = this.notifications.find((n) => n.id === id);
-        if (notification) {
-          notification.read = true;
-          // 서버로 읽음 상태를 업데이트
-          fetch(`/api/notifications/${id}`, {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ read: true }),
-          });
-        }
-      },
-      formatDate(date) {
-        return new Date(date).toLocaleString();
-      },
-    },
-    mounted() {
-      this.fetchNotifications();
-      // WebSocket 연결 설정 (옵션)
-      const socket = new WebSocket("ws://your-server.com/notifications");
-      socket.onmessage = (event) => {
-        const newNotification = JSON.parse(event.data);
-        this.notifications.unshift(newNotification);
-      };
-    },
-  };
-  </script>
-  
-  <style>
-  .notify-page {
-    padding: 20px;
+    <div v-else>
+      <p>No notifications received yet.</p>
+    </div>
+  </div>
+</template>
+
+<script>
+import { io } from 'socket.io-client';
+
+export default {
+  name: "NotifyPage",
+  data() {
+    return {
+      notifications: [] // 수신한 알림 저장
+    };
+  },
+  mounted() {
+    // Socket.IO 연결
+    const socket = io('http://localhost:5000'); // Node.js 서버 주소
+
+    // 서버로부터 알림 수신
+    socket.on('notification', (notification) => {
+      console.log('Received notification:', notification);
+      this.notifications.push(notification); // Vue 상태 업데이트
+    });
+
+    socket.on('connect', () => {
+      console.log('Connected to notification server.');
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Disconnected from notification server.');
+    });
   }
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  li {
-    padding: 10px;
-    border: 1px solid #ddd;
-    margin-bottom: 10px;
-    cursor: pointer;
-  }
-  li.read {
-    background-color: #f0f0f0;
-  }
-  </style>
-  
+};
+</script>
+
+<style scoped>
+.notify-page {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+}
+
+h1 {
+  color: #333;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  background: #f9f9f9;
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+</style>

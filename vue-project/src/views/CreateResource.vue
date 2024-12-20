@@ -314,10 +314,12 @@ export default {
     createSubscriptionResource() {
       let sub_obj = {}
       sub_obj['m2m:sub'] = {}
+      console.log('this.data_obj.nu:', this.data_obj.nu, typeof this.data_obj.nu);
       if (this.data_obj.rn != '') sub_obj['m2m:sub'].rn = this.data_obj.rn.trim()
       if (this.data_obj.lbl != '') sub_obj['m2m:sub'].lbl = this.data_obj.lbl.split(',').trim()
-      if (this.data_obj.nu != '') sub_obj['m2m:sub'].nu = this.data_obj.nu.split(',').trim()
+      if (this.data_obj.nu != '') sub_obj['m2m:sub'].nu = this.data_obj.nu.split(',').map(uri => uri.trim())
       else alert('Enter Notification URI(nu)')
+      console.log(sub_obj['m2m:sub'].nu);
       if (this.data_obj.nct != '') sub_obj['m2m:sub'].nct = parseInt(this.data_obj.nct)
       if (this.data_obj.enc != '') {
         sub_obj['m2m:sub'].enc = {}
