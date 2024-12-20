@@ -13,6 +13,7 @@
     <div class="main-content">
       <!-- 입력 폼 -->
       <form @submit.prevent="handleCreate" class="form-section">
+        <h2>Destination</h2>
         <div class="form-group">
           <label for="platformAddress">Platform Address:</label>
           <input type="text" id="platformAddress" v-model="data_obj.Platform_addr" readonly />
@@ -21,105 +22,120 @@
           <label for="resourceId">Resource ID (To):</label>
           <input type="text" id="resourceId" v-model="data_obj.Res_Id" />
         </div>
+        <h2>Body</h2>
         <div class="form-group">
-          <label for="resourceName">{{ selectedEntity }} Resource Name:</label>
+          <label for="resourceName">{{ selectedEntity }} RN (Resource Name):</label>
           <input type="text" id="resourceName" v-model="data_obj.rn" :placeholder="`Enter your ${selectedEntity} Resource name`" />
         </div>
         <div class="form-group" v-if="['AE', 'Container', 'ContentInstance'].includes(selectedEntity)">
-          <label for="label">Label:</label>
+          <label for="label">lbl (label):</label>
           <input type="text" id="label" v-model="data_obj.lbl" placeholder="Enter labels (comma separated)" />
         </div>
+
         <!-- ContentInstance를 위한 con 입력 필드 -->
         <div class="form-group" v-if="selectedEntity === 'ContentInstance'">
-          <label for="con">Content:</label>
+          <label class="required" for="con">con (Content):</label>
           <input type="text" id="con" v-model="data_obj.con" placeholder="Enter content value" />
         </div>
 
         <!-- Subscription을 위한 nu 입력 필드 -->
         <div class="form-group" v-if="selectedEntity === 'Subscription'">
-          <label for="nu">Notification URI:</label>
+          <label class="required" for="nu">nu (Notification URI):</label>
           <input type="text" id="nu" v-model="data_obj.nu" placeholder="Enter notification URI" />
-          <label for="nct">Notification Content Type:</label>
+        </div>
+        <div class="form-group" v-if="selectedEntity === 'Subscription'">
+          <label for="nct">nct (Notification Content Type):</label>
           <input type="text" id="nct" v-model="data_obj.nct" placeholder="Enter Notification Content Type"/>
-          <label for="nct">Notification Content Event:</label>
+        </div>
+        <div class="form-group" v-if="selectedEntity === 'Subscription'">
+          <label class="required" for="net">net (Notification Event Type):</label>
           <input type="text" id="net" v-model="data_obj.net" placeholder="Enter Notification Event Type"/>
         </div>
 
         <!-- Mandatory Resources for AE-->
         <!-- API -->
         <div class="form-group" v-if="selectedEntity === 'AE'">
-          <label for="api">API:</label>
+          <label class="required" for="api">api (Application ID):</label>
           <input type="none" id="api" v-model="data_obj.api" readonly />
         </div>
          <!-- Request Reachability -->
         <div class="form-group" v-if="selectedEntity === 'AE'">
-          <label for="rr">Request Reachability:</label>
+          <label class="required" for="rr">rr (Request Reachability):</label>
           <input type="none" id="rr" v-model="data_obj.rr" readonly />
         </div>
         <!-- Srv -->
         <div class="form-group" v-if="selectedEntity === 'AE'">
-          <label for="srv">Supported Release Version:</label>
+          <label class="required" for="srv">srv (Supported Release Version):</label>
           <input type="none" id="srv" v-model="data_obj.srv" readonly />
         </div>
 
         <!-- Mandatory Resources for Container -->
         <!-- Mni -->
         <div class="form-group" v-if="selectedEntity === 'Container'">
-          <label for="mni">Maximum number of instance</label>
+          <label for="mni">mni (Maximum Number of Instance, Optional)</label>
           <input type="none" id="mni" v-model="data_obj.mni" placeholder="Enter Maximum number of instance (Optional)"/>
         </div>
         <!-- Mbs -->
         <div class="form-group" v-if="selectedEntity === 'Container'">
-          <label for="mbs">Maximum byte size</label>
+          <label for="mbs">mbs (Maximum Byte Size, Optional)</label>
           <input type="none" id="mbs" v-model="data_obj.mbs" placeholder="Enter Maximum byte size (Optional)" />
         </div>
 
-        <h3>Headers</h3>
+
+        <h2>Headers</h2>
         <div class="form-group">
           <label>X-M2M-RI:</label>
           <input type="text" v-model="data_obj.X_M2M_RI" />
         </div>
         <div class="form-group">
+          <label>X-M2M-RVI:</label>
+          <input type="text" v-model="data_obj.X_M2M_RVI" readonly/>
+        </div>
+        <div class="form-group">
           <label>X-M2M-Origin:</label>
-          <input type="text" v-model="data_obj.X_M2M_Origin" />
+          <input type="text" id="X-M2M-Origin" v-model="data_obj.X_M2M_Origin" placeholder="Enter Originator starts with 'C' or 'S'" />
+        </div>
+        <div class="form-group">
+          <label>Content-Type:</label>
+          <input type="text" v-model="data_obj.Content_Type" readonly/>
         </div>
         <div class="form-group">
           <label>Accept:</label>
-          <input type="text" v-model="data_obj.Accept" />
+          <input type="text" v-model="data_obj.Accept" readonly/>
         </div>
 
         <button type="submit" class="btn-submit">Send</button>
-      </form>
-
       <!-- Request와 Response -->
-      <div class="request-response">
+        <div class="divider"/>
+
         <div class="request">
           <h3>Request</h3>
-          <!--<div class="header">
-            <p>Header</p>
-            <ul>
-              <li>X-M2M-RI: {{ data_obj.X_M2M_RI }}</li>
-              <li>X-M2M-Origin: {{ data_obj.X_M2M_Origin }}</li>
-              <li>Accept: {{ data_obj.Accept }}</li>
-            </ul>
-          </div>-->
+            <!--<div class="header">
+              <p>Header</p>
+              <ul>
+                <li>X-M2M-RI: {{ data_obj.X_M2M_RI }}</li>
+                <li>X-M2M-Origin: {{ data_obj.X_M2M_Origin }}</li>
+                <li>Accept: {{ data_obj.Accept }}</li>
+              </ul>
+            </div>-->
           <textarea placeholder="Request Body" class="body-text" v-model="request_text" readonly></textarea>
         </div>
+
         <div class="response">
           <h3>Response</h3>
-          <!--<div class="header">
-            <p>Header</p>
-            <ul>
-              <li>X-M2M-RI:</li>
-              <li>X-M2M-RSC:</li>
-              <li>X-M2M-RVI:</li>
-              <li>Content-Length:</li>
-              <li>Content-Type:</li>
-            </ul>
-          </div>-->
+            <!--<div class="header">
+              <p>Header</p>
+              <ul>
+                <li>X-M2M-RI:</li>
+                <li>X-M2M-RSC:</li>
+                <li>X-M2M-RVI:</li>
+                <li>Content-Length:</li>
+                <li>Content-Type:</li>
+              </ul>
+            </div>-->
           <textarea placeholder="Response Body" class="body-text" v-model="response_text" readonly></textarea>
         </div>
-      </div>
+      </form>
     </div>
   </div>
 </template>
@@ -137,7 +153,8 @@ export default {
         Res_Id: 'TinyIoT',
         X_M2M_RI: 'create',
         X_M2M_RVI: '2a',
-        X_M2M_Origin: 'CAdmin',
+        X_M2M_Origin: '',
+        Content_Type: 'application/json;ty=2',
         Accept: 'application/json',
 
         lbl: [],
@@ -163,6 +180,7 @@ export default {
         mnm: '',
         mt: '',
         csy: '',
+        nct: '',
       },
       req_fields: [
         { key: 'X-M2M-RI', class: 'text-center' },
@@ -201,6 +219,29 @@ export default {
   methods: {
     selectEntity(entity) {
       this.selectedEntity = entity;
+      this.data_obj.rn = ''
+      this.data_obj.lbl = []
+      this.data_obj.Res_Id = 'TinyIoT'
+      this.data_obj.X_M2M_Origin = ''
+      this.data_obj.mni = ''
+      this.data_obj.mbs = ''
+      this.data_obj.net = [3, 4]
+      this.data_obj.nct = ''
+      this.data_obj.nu = ''
+      this.data_obj.con = ''
+      switch(entity){
+        case 'AE':
+          this.data_obj.Content_Type = 'application/json;ty=2'
+          break;
+        case 'Container':
+          this.data_obj.Content_Type = 'application/json;ty=3'
+          break;
+        case 'ContentInstance':
+          this.data_obj.Content_Type = 'application/json;ty=4'
+          break;
+        case 'Subscription':
+          this.data_obj.Content_Type = 'application/json;ty=23'
+      }
       console.log(`Selected Entity: ${entity}`);
     },
     handleCreate() {
@@ -244,7 +285,12 @@ export default {
       ae_obj['m2m:ae'] = {}
 
       if (this.data_obj.rn != '') ae_obj['m2m:ae'].rn = this.data_obj.rn.trim()
-      if (this.data_obj.lbl.length > 0) ae_obj['m2m:ae'].lbl = this.data_obj.lbl.split(',').trim()
+      if (this.data_obj.lbl != '') {
+        ae_obj['m2m:ae'].lbl = this.data_obj.lbl
+          .split(',')
+          .map(item => item.trim())
+          .filter(item => item !== '');
+      }
       if (this.data_obj.api == '' || this.data_obj.rr == '') {
         alert('Enter app-Id(api) and requestReachability(rr)')
       } else {
@@ -252,14 +298,14 @@ export default {
         ae_obj['m2m:ae'].rr = this.data_obj.rr
       }
       ae_obj['m2m:ae'].srv = this.data_obj.srv
-      this.data_obj['Content-Type'] = 'application/json;ty=2'
+      this.data_obj.Content_Type = 'application/json;ty=2'
       this.data_obj['Body'] = ae_obj
 
       let headers = {}
       headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
       headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
       headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
-      headers['Content-Type'] = this.data_obj['Content-Type']
+      headers['Content-Type'] = this.data_obj.Content_Type
       headers['Accept'] = this.data_obj.Accept
 
       this.req_display_obj = ae_obj
@@ -271,18 +317,23 @@ export default {
       cnt_obj['m2m:cnt'] = {}
 
       if (this.data_obj.rn != '') cnt_obj['m2m:cnt'].rn = this.data_obj.rn.trim()
-      if (this.data_obj.lbl != '') cnt_obj['m2m:cnt'].lbl = this.data_obj.lbl.split(',').trim()
+      if (this.data_obj.lbl != '') {
+        cnt_obj['m2m:cnt'].lbl = this.data_obj.lbl
+          .split(',')
+          .map(item => item.trim())
+          .filter(item => item !== '')
+      }
       if (this.data_obj.mni != '') cnt_obj['m2m:cnt'].mni = parseInt(this.data_obj.mni)
       if (this.data_obj.mbs != '') cnt_obj['m2m:cnt'].mbs = parseInt(this.data_obj.mbs)
 
-      this.data_obj['Content-Type'] = 'application/json;ty=3'
+      this.data_obj.Content_Type = 'application/json;ty=3'
       this.data_obj['Body'] = cnt_obj
 
       let headers = {}
       headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
       headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
       headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
-      headers['Content-Type'] = this.data_obj['Content-Type']
+      headers['Content-Type'] = this.data_obj.Content_Type
       headers['Accept'] = this.data_obj.Accept
 
       this.req_display_obj = cnt_obj
@@ -294,17 +345,22 @@ export default {
       cin_obj['m2m:cin'] = {}
 
       if (this.data_obj.rn != '') cin_obj['m2m:cin'].rn = this.data_obj.rn.trim()
-      if (this.data_obj.lbl != '') cin_obj['m2m:cin'].lbl = this.data_obj.lbl.split(',').trim()
+      if (this.data_obj.lbl != '') {
+        cin_obj['m2m:cin'].lbl = this.data_obj.lbl
+          .split(',')
+          .map(item => item.trim())
+          .filter(item => item !== '')
+      }
       if (this.data_obj.con != '') cin_obj['m2m:cin'].con = this.data_obj.con
 
-      this.data_obj['Content-Type'] = 'application/json;ty=4'
+      this.data_obj.Content_Type = 'application/json;ty=4'
       this.data_obj['Body'] = cin_obj
 
       let headers = {}
       headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
       headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
       headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
-      headers['Content-Type'] = this.data_obj['Content-Type']
+      headers['Content-Type'] = this.data_obj.Content_Type
       headers['Accept'] = this.data_obj.Accept
 
       this.req_display_obj = cin_obj
@@ -314,27 +370,36 @@ export default {
     createSubscriptionResource() {
       let sub_obj = {}
       sub_obj['m2m:sub'] = {}
-      console.log('this.data_obj.nu:', this.data_obj.nu, typeof this.data_obj.nu);
       if (this.data_obj.rn != '') sub_obj['m2m:sub'].rn = this.data_obj.rn.trim()
-      if (this.data_obj.lbl != '') sub_obj['m2m:sub'].lbl = this.data_obj.lbl.split(',').trim()
-      if (this.data_obj.nu != '') sub_obj['m2m:sub'].nu = this.data_obj.nu.split(',').map(uri => uri.trim())
+      if (this.data_obj.lbl != '') {
+        sub_obj['m2m:sub'].lbl = this.data_obj.lbl
+          .split(',')
+          .map(item => item.trim())
+          .filter(item => item !== '')
+      }
+      if (this.data_obj.nu != '') {
+        sub_obj['m2m:sub'].nu = this.data_obj.nu
+          .split(',')
+          .map(item => item.trim())
+          .filter(item => item !== '')
+      }
       else alert('Enter Notification URI(nu)')
-      console.log(sub_obj['m2m:sub'].nu);
       if (this.data_obj.nct != '') sub_obj['m2m:sub'].nct = parseInt(this.data_obj.nct)
       if (this.data_obj.enc != '') {
-        sub_obj['m2m:sub'].enc = {}
-        sub_obj['m2m:sub'].enc.net = this.data_obj.net.split(', ')
+        sub_obj['m2m:sub'].enc = {
+          net: this.data_obj.net.split(',').map(item => parseInt(item.trim())).filter(item => !isNaN(item))
+        }
       }
       if (this.data_obj.exc != '') sub_obj['m2m:sub'].exc = parseInt(this.data_obj.exc)
 
-      this.data_obj['Content-Type'] = 'application/json;ty=23'
+      this.data_obj.Content_Type = 'application/json;ty=23'
       this.data_obj['Body'] = sub_obj
 
       let headers = {}
       headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
       headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
       headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
-      headers['Content-Type'] = this.data_obj['Content-Type']
+      headers['Content-Type'] = this.data_obj.Content_Type
       headers['Accept'] = this.data_obj.Accept
 
       this.req_display_obj = sub_obj
@@ -349,8 +414,14 @@ export default {
       else alert('Enter Callback URI(cb)') // not quite sure about this
       if (this.data_obj.rr != '') csr_obj['m2m:csr'].rr = this.data_obj.rr
       if (this.data_obj.csi != '') csr_obj['m2m:csr'].csi = this.data_obj.csi
-      if (this.data_obj.poa.length > 0) csr_obj['m2m:csr'].poa = this.data_obj.poa.split(', ')
-      if (this.data_obj.srv.length > 0) csr_obj['m2m:csr'].srv = this.data_obj.srv.split(', ')
+      if (this.data_obj.poa.length > 0) csr_obj['m2m:csr'].poa = this.data_obj.poa
+          .split(',')
+          .map(item => item.trim())
+          .filter(item => item !== '')
+      if (this.data_obj.srv.length > 0) csr_obj['m2m:csr'].srv = this.data_obj.srv
+          .split(',')
+          .map(item => item.trim())
+          .filter(item => item !== '')
 
       this.data_obj['Content-Type'] = 'application/json;ty=16'
       this.data_obj['Body'] = csr_obj
@@ -373,8 +444,12 @@ export default {
       acp_obj['m2m:acp'].pv = {}
       acp_obj['m2m:acp'].pvs = {}
       if(this.data_obj.rn != '') acp_obj['m2m:acp'].rn = this.data_obj.rn
-      acp_obj['m2m:acp'].pv.acr = this.data_obj.pv_acr.split(', ')
-      acp_obj['m2m:acp'].pvs.acr = this.data_obj.pvs_acr.split(', ')
+      acp_obj['m2m:acp'].pv.acr = this.data_obj.pv_acr
+          .split(',')
+          .filter(item => item !== '')
+      acp_obj['m2m:acp'].pvs.acr = this.data_obj.pvs_acr
+          .split(',')
+          .filter(item => item !== '')
 
       this.data_obj['Content-Type'] = 'application/json;ty=1'
       this.data_obj['Body'] = acp_obj
@@ -394,7 +469,10 @@ export default {
       let grp_obj = {}
       grp_obj['m2m:grp'] = {}
       if(this.data_obj.rn != '') grp_obj['m2m:grp'].rn = this.data_obj.rn
-      if(this.data_obj.mid.length > 0) grp_obj['m2m:grp'].mid = this.data_obj.mid.split(', ')
+      if(this.data_obj.mid.length > 0) grp_obj['m2m:grp'].mid = this.data_obj.mid
+          .split(',')
+          .map(item => item.trim())
+          .filter(item => item !== '')
       if(this.data_obj.mnm != '') grp_obj['m2m:grp'].mnm = this.data_obj.mnm
       if(this.data_obj.mt != '') grp_obj['m2m:grp'].mt = this.data_obj.mt
       if(this.data_obj.csy != '') grp_obj['m2m:grp'].csy = this.data_obj.csy
@@ -545,26 +623,20 @@ input::placeholder {
   background-color: #0056b3;
 }
 
-.request-response {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
 .request,
 .response {
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  background-color: #cccccc;
+  margin-top: 20px;
 }
 
 .request h3,
 .response h3 {
   font-size: 16px;
   font-weight: bold;
-  color: #333; /* 제목 텍스트를 더 진하게 */
+  color: #3b3b3b; /* 제목 텍스트를 더 진하게 */
   margin-bottom: 10px;
 }
 
@@ -572,7 +644,7 @@ input::placeholder {
   list-style: none;
   padding: 0;
 }
-.header{
+.header, h3{
   color: #333;
 }
 
@@ -597,8 +669,21 @@ textarea::placeholder {
 
 /* 기존 input 스타일은 유지하고 아래 스타일을 추가합니다 */
 input[readonly] {
-  background-color: #ffffff;  /* 배경색 약간 어둡게 */
-  color: #a5a5a5;  /* 텍스트 색상 변경 */
+  background-color: #d4d2d2;  /* 배경색 약간 어둡게(아예 회색빛 넣어서 구분되게 만들었음!) */
+  color: #333;  /* 텍스트 색상 변경 */
   cursor: not-allowed;  /* 커서 모양 변경 */
+}
+
+.divider {
+  margin: 20px 0;
+  height: 1px;
+  background-color: #e0e0e0;
+  width: 100%;
+}
+
+.required::before {
+    content: '*';
+    color: red; /* 또는 원하는 색상 */
+    margin-right: 2px; /* 필요한 경우 여백 조정 */
 }
 </style>

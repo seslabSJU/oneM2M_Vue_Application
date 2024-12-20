@@ -1,6 +1,6 @@
 <template>
   <div class="notify-page">
-    <h1>Notify Page</h1>
+    <h1>Notifications</h1>
     <div v-if="notifications.length > 0">
       <h2>Received Notifications</h2>
       <ul>
@@ -27,7 +27,7 @@ export default {
   },
   mounted() {
     // Socket.IO 연결
-    const socket = io('http://localhost:5000'); // Node.js 서버 주소
+    const socket = io('http://localhost:5000'); // Notify 서버 주소
 
     // 서버로부터 알림 수신
     socket.on('notification', (notification) => {
@@ -36,11 +36,11 @@ export default {
     });
 
     socket.on('connect', () => {
-      console.log('Connected to notification server.');
+      console.log('Connected to Notify server.');
     });
 
     socket.on('disconnect', () => {
-      console.log('Disconnected from notification server.');
+      console.log('Disconnected from Notify server.');
     });
   }
 };

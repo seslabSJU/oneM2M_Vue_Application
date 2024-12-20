@@ -9,7 +9,7 @@ import { RouterView } from 'vue-router'
       <router-view></router-view>
     </div>
     <div class="iframe-container">
-      <iframe src="http://localhost:3000/notifications" frameborder="0"></iframe>
+      <iframe src='/notifications' frameborder="0"></iframe>
     </div>
   </main>
 </template>

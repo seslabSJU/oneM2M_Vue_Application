@@ -30,7 +30,7 @@ const routes = [
     component: Delete
   },
   {
-    path: '/notfications',
+    path: '/notifications',
     name: 'Notfiy',
     component: NotifyPage
   },
