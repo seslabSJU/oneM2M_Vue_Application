@@ -53,6 +53,10 @@
           <input type="text" v-model="data_obj.X_M2M_Origin" readonly/>
         </div>
         <div class="form-group">
+          <label>Content-Type:</label>
+          <input type="text" v-model="data_obj.Content_Type" readonly/>
+        </div>
+        <div class="form-group">
           <label>Accept:</label>
           <input type="text" v-model="data_obj.Accept" readonly />
         </div>
@@ -107,6 +111,7 @@ export default {
         X_M2M_RI: 'update',
         X_M2M_RVI: '2a',
         X_M2M_Origin: 'CAdmin',
+        Content_Type: 'application/json;ty=2',
         Accept: 'application/json',
 
         lbl: '',
@@ -181,6 +186,16 @@ export default {
       this.data_obj.lbl = []
       this.data_obj.Res_Id = 'TinyIoT'
       this.data_obj.X_M2M_Origin = 'CAdmin'
+      switch(entity){
+        case 'AE':
+          this.data_obj.Content_Type = 'application/json;ty=2'
+          break;
+        case 'Container':
+          this.data_obj.Content_Type = 'application/json;ty=3'
+          break;
+        case 'Subscription':
+          this.data_obj.Content_Type = 'application/json;ty=23'
+      }
       console.log(`Selected Entity: ${entity}`);
     },
     handleUpdate() {
@@ -225,13 +240,13 @@ export default {
           .filter(item => item !== '');
 
         this.data_obj.Body = ae_obj;
-        this.data_obj['Content-Type'] = 'application/json;ty=2';
+        this.data_obj.Content_Type = 'application/json;ty=2';
 
         let headers = {}
         headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
         headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
         headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
-        headers['Content-Type'] = this.data_obj['Content-Type']
+        headers['Content-Type'] = this.data_obj.Content_Type
         headers['Accept'] = this.data_obj.Accept
 
         this.req_display_obj = ae_obj
@@ -247,13 +262,13 @@ export default {
           .filter(item => item !== '');
 
         this.data_obj.Body = cnt_obj;
-        this.data_obj['Content-Type'] = 'application/json;ty=3';
+        this.data_obj.Content_Type = 'application/json;ty=3';
 
         let headers = {}
         headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
         headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
         headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
-        headers['Content-Type'] = this.data_obj['Content-Type']
+        headers['Content-Type'] = this.data_obj.Content_Type
         headers['Accept'] = this.data_obj.Accept
 
         this.req_display_obj = cnt_obj
@@ -268,13 +283,13 @@ export default {
           .map(item => item.trim())
           .filter(item => item !== '');
         this.data_obj.Body = sub_obj;
-        this.data_obj['Content-Type'] = 'application/json;ty=23';
+        this.data_obj.Content_Type = 'application/json;ty=23';
 
         let headers = {}
         headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
         headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
         headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
-        headers['Content-Type'] = this.data_obj['Content-Type']
+        headers['Content-Type'] = this.data_obj.Content_Type
         headers['Accept'] = this.data_obj.Accept
 
         this.req_display_obj = sub_obj

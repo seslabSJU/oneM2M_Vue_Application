@@ -55,6 +55,10 @@
           <input type="text" v-model="data_obj.X_M2M_Origin" readonly/>
         </div>
         <div class="form-group">
+          <label>Content-Type:</label>
+          <input type="text" v-model="data_obj.Content_Type" readonly/>
+        </div>
+        <div class="form-group">
           <label>Accept:</label>
           <input type="text" v-model="data_obj.Accept" readonly />
         </div>
@@ -109,6 +113,7 @@ export default {
         X_M2M_RI: "retrieve",
         X_M2M_RVI: "2a",
         X_M2M_Origin: 'CAdmin',
+        Content_Type: 'application/json;ty=2',
         Accept: "application/json",
         Retrieve_text: "GET",
       },
@@ -151,6 +156,19 @@ export default {
       this.data_obj.Res_Id = 'TinyIoT'
       this.data_obj.rn = ''
       this.data_obj.X_M2M_Origin = 'CAdmin'
+      switch(entity){
+        case 'AE':
+          this.data_obj.Content_Type = 'application/json;ty=2'
+          break;
+        case 'Container':
+          this.data_obj.Content_Type = 'application/json;ty=3'
+          break;
+        case 'ContentInstance':
+          this.data_obj.Content_Type = 'application/json;ty=4'
+          break;
+        case 'Subscription':
+          this.data_obj.Content_Type = 'application/json;ty=23'
+      }
       console.log(`Selected Entity: ${entity}`);
     },
     handleRetrieve() {
@@ -176,14 +194,14 @@ export default {
       ae_obj['m2m:ae'] = {}
 
       if (this.data_obj.rn != '') ae_obj['m2m:ae'].rn = this.data_obj.rn
-      this.data_obj['Content-Type'] = 'application/json;ty=2'
+      this.data_obj.Content_Type = 'application/json;ty=2'
       this.data_obj['Body'] = ae_obj
 
       let headers = {}
       headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
       headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
       headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
-      headers['Content-Type'] = this.data_obj['Content-Type']
+      headers['Content-Type'] = this.data_obj.Content_Type
       headers['Accept'] = this.data_obj.Accept
 
       this.req_display_obj = ae_obj
@@ -195,14 +213,14 @@ export default {
       cnt_obj['m2m:cnt'] = {}
 
       if (this.data_obj.rn != '') cnt_obj['m2m:cnt'].rn = this.data_obj.rn
-      this.data_obj['Content-Type'] = 'application/json;ty=3'
+      this.data_obj.Content_Type = 'application/json;ty=3'
       this.data_obj['Body'] = cnt_obj
 
       let headers = {}
       headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
       headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
       headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
-      headers['Content-Type'] = this.data_obj['Content-Type']
+      headers['Content-Type'] = this.data_obj.Content_Type
       headers['Accept'] = this.data_obj.Accept
 
       this.req_display_obj = cnt_obj
@@ -214,14 +232,14 @@ export default {
       cin_obj['m2m:cin'] = {}
 
       if (this.data_obj.rn != '') cin_obj['m2m:cin'].rn = this.data_obj.rn
-      this.data_obj['Content-Type'] = 'application/json;ty=4'
+      this.data_obj.Content_Type = 'application/json;ty=4'
       this.data_obj['Body'] = cin_obj
 
       let headers = {}
       headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
       headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
       headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
-      headers['Content-Type'] = this.data_obj['Content-Type']
+      headers['Content-Type'] = this.data_obj.Content_Type
       headers['Accept'] = this.data_obj.Accept
 
       this.req_display_obj = cin_obj
@@ -232,14 +250,14 @@ export default {
       let sub_obj = {}
       sub_obj['m2m:sub'] = {}
       if (this.data_obj.rn != '') sub_obj['m2m:sub'].rn = this.data_obj.rn
-      this.data_obj['Content-Type'] = 'application/json;ty=23'
+      this.data_obj.Content_Type = 'application/json;ty=23'
       this.data_obj['Body'] = sub_obj
 
       let headers = {}
       headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
       headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
       headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
-      headers['Content-Type'] = this.data_obj['Content-Type']
+      headers['Content-Type'] = this.data_obj.Content_Type
       headers['Accept'] = this.data_obj.Accept
 
       this.req_display_obj = sub_obj
