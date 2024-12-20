@@ -386,11 +386,9 @@ export default {
       else alert('Enter Notification URI(nu)')
       if (this.data_obj.nct != '') sub_obj['m2m:sub'].nct = parseInt(this.data_obj.nct)
       if (this.data_obj.enc != '') {
-        sub_obj['m2m:sub'].enc = {}
-        sub_obj['m2m:sub'].enc.net = this.data_obj.net
-          .split(',')
-          .map(item => {item.trim(); item = parseInt(item);})
-          .filter(item => item !== '')
+        sub_obj['m2m:sub'].enc = {
+          net: this.data_obj.net.split(',').map(item => parseInt(item.trim())).filter(item => !isNaN(item))
+        }
       }
       if (this.data_obj.exc != '') sub_obj['m2m:sub'].exc = parseInt(this.data_obj.exc)
 
