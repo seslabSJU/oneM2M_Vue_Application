@@ -45,9 +45,9 @@
     4. If it’s successfully retrieved the resource, response body will appear message from server. 
     5. If not, response body will appear nothing or error code.
         
-        ![스크린샷 2025-02-20 202130.png](/oneM2M_Vue_Application/Images/6199568f-ee29-43d6-ab5e-a8f68c550d7b.png)
+        ![스크린샷 2025-02-20 202130.png](./Images/6199568f-ee29-43d6-ab5e-a8f68c550d7b.png)
         
-        ![스크린샷 2025-02-20 202303.png](/oneM2M_Vue_Application/Images/7e89b5ce-3205-418b-996b-a8785aab7daa.png)
+        ![스크린샷 2025-02-20 202303.png](./Images/7e89b5ce-3205-418b-996b-a8785aab7daa.png)
         
 2. Retrieve Request
     1. Click Retrieve Button
@@ -63,9 +63,9 @@
     4. If it’s successfully retrieved the resource, response body will appear with data from server. 
     5. If not, response body will appear nothing or error code.
         
-        ![스크린샷 2025-02-20 203748.png](/oneM2M_Vue_Application/Images/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2025-02-20_203748.png)
+        ![스크린샷 2025-02-20 203748.png](./Images/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2025-02-20_203748.png)
         
-        ![스크린샷 2025-02-20 203805.png](/oneM2M_Vue_Application/Images/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2025-02-20_203805.png)
+        ![스크린샷 2025-02-20 203805.png](./Images/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2025-02-20_203805.png)
         
 3. Update Request
     1. Click Update Button
@@ -81,9 +81,9 @@
     4. If it’s successfully retrieved the resource, response body will appear message from server. 
     5. If not, response body will appear nothing or error code.
         
-        ![스크린샷 2025-02-20 203924.png](/oneM2M_Vue_Application/Images/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2025-02-20_203924.png)
+        ![스크린샷 2025-02-20 203924.png](./Images/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2025-02-20_203924.png)
         
-        ![스크린샷 2025-02-20 203938.png](/oneM2M_Vue_Application/Images/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2025-02-20_203938.png)
+        ![스크린샷 2025-02-20 203938.png](./Images/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2025-02-20_203938.png)
         
 4. Delete Request
     1. Click Delete Button
@@ -97,4 +97,4 @@
     4. If it’s successfully retrieved the resource, response body will appear message from server. 
     5. If not, response body will appear nothing or error code.
         
-        ![스크린샷 2025-02-20 204019.png](/oneM2M_Vue_Application/Images/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2025-02-20_204019.png)
+        ![스크린샷 2025-02-20 204019.png](./Images/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2025-02-20_204019.png)
