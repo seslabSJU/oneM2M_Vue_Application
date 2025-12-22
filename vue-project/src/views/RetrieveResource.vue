@@ -129,9 +129,9 @@ export default {
         X_M2M_RVI: '2a',
         X_M2M_Origin: '',
         Accept: 'application/json',
-        apikey: 'bpGPrGIcFf4vMHzgrOHIQxBNTJPXZHmR',
-        creator: 'sju25110182',
-        lecture: 'LCT_20250002',
+        apikey: '',
+        creator: '',
+        lecture: '',
         Retrieve_text: 'GET',
       },
       req_fields: [

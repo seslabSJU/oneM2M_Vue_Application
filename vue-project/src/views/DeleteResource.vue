@@ -104,9 +104,9 @@ export default {
         X_M2M_Origin: "",
         X_M2M_RVI: "2a",
         Accept: "application/json",
-        apikey: 'bpGPrGIcFf4vMHzgrOHIQxBNTJPXZHmR',
-        creator: 'sju25110182',
-        lecture: 'LCT_20250002',
+        apikey: '',
+        creator: '',
+        lecture: '',
         rn: "",
       },
       res_items: [

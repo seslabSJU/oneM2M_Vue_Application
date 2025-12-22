@@ -143,9 +143,9 @@ export default {
         X_M2M_Origin: '',
         Accept: 'application/json',
         Content_Type: 'application/json',
-        apikey: 'bpGPrGIcFf4vMHzgrOHIQxBNTJPXZHmR',
-        creator: 'sju25110182',
-        lecture: 'LCT_20250002',
+        apikey: '',
+        creator: '',
+        lecture: '',
 
         lbl: '',
         mni: '',
