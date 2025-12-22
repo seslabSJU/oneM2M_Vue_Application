@@ -7,20 +7,23 @@ import { RouterView } from 'vue-router'
     <div class="main-content">
       <Navbar />
       <router-view></router-view>
-    </div>
-    <div class="iframe-container">
-      <iframe src='/notifications' frameborder="0"></iframe>
+      <!-- Notifications 섹션 - CRUD 화면 아래에 표시 -->
+      <div class="notifications-section">
+        <NotifyPage />
+      </div>
     </div>
   </main>
 </template>
 
 <script>
 import Navbar from './components/Navbar.vue'
+import NotifyPage from './views/NotifyPage.vue'
 
 export default {
   name: 'App',
   components: {
-    Navbar
+    Navbar,
+    NotifyPage
   }
 }
 </script>
@@ -64,16 +67,14 @@ nav {
   padding: 20px;
 }
 
-.iframe-container {
-  width: 40vw; /* 화면의 40%를 차지 */
-  height: 100vh;
-  border-left: 1px solid #ccc; /* 메인 콘텐츠와 구분선 */
-  background-color: white;
-}
-
-iframe {
+/* Notifications 섹션 - CRUD 아래에 표시 */
+.notifications-section {
   width: 100%;
-  height: 100%;
+  margin-top: 20px;
+  padding: 20px;
+  border-top: 2px solid #ddd;
+  background-color: #f5f5f5;
+  border-radius: 8px;
 }
 
 @media screen and (min-width: 1200px) {

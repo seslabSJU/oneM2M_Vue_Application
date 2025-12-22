@@ -64,7 +64,7 @@ ul {
 li {
   background: #f9f9f9;
   margin: 10px 0;
-  padding: 10px;
+  padding: 5px;
   border: 1px solid #ddd;
   border-radius: 5px;
 }

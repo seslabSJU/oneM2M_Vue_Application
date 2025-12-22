@@ -7,9 +7,14 @@ export default defineConfig({
     port:4000,
     proxy:{
       '/TinyIoT': {
-        target: 'http://127.0.0.1:3000/',
+        target: 'https://onem2m.iotcoss.ac.kr',
         changeOrigin: true,
-        secure: false
+        secure: true
+      }, 
+      '/Mobius': {
+        target: 'https://onem2m.iotcoss.ac.kr',
+        changeOrigin: true,
+        secure: true
       }
     },
   },

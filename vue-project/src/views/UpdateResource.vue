@@ -16,15 +16,33 @@
     <div class="main-content">
       <!-- 입력 폼 -->
       <form @submit.prevent="handleUpdate" class="form-section">
+        <h2>Destination</h2>
         <div class="form-group">
           <label for="platformAddress">Platform Address:</label>
           <input type="text" id="platformAddress" v-model="data_obj.Platform_addr" readonly />
         </div>
         <div class="form-group">
-          <label for="resourceId">Resource ID:</label>
-          <input type="text" id="resourceId" v-model="data_obj.Res_Id" />
+          <label for="cseBase">CSEBase:</label>
+          <input type="text" id="cseBase" v-model="data_obj.cb" placeholder="Enter CSEBase (ex. tinyIoT, Mobius)" />
         </div>
-
+        <div class="form-group" v-if="selectedEntity === 'AE'">
+          <label for="resourceId">Resource ID (TO) (ex. CSEBase):</label>
+          <input type="text" id="resourceId" v-model="data_obj.Res_Id" placeholder="Enter parent resource path" />
+        </div>
+        <div class="form-group" v-if="selectedEntity === 'Container'">
+          <label for="resourceId">Resource ID (TO) (ex. CSEBase/AE_RN):</label>
+          <input type="text" id="resourceId" v-model="data_obj.Res_Id" placeholder="Enter parent resource path" />
+        </div>
+        <div class="form-group" v-if="selectedEntity === 'Subscription'">
+          <label for="resourceId">Resource ID (TO) (ex. CSEBase/AE_RN/CNT_RN):</label>
+          <input type="text" id="resourceId" v-model="data_obj.Res_Id" placeholder="Enter parent resource path" />
+        </div>
+        <div class="form-group">
+          <label for="resourceName">{{ selectedEntity }} Resource Name:</label>
+          <input type="text" id="resourceName" v-model="data_obj.rn" :placeholder="`Enter your ${selectedEntity} Resource name to update`" />
+        </div>
+        
+        <h2>Body</h2>
         <!-- AE와 Container를 위한 Label 입력 필드 -->
         <div class="form-group" v-if="['AE', 'Container'].includes(selectedEntity)">
           <label for="label">Label:</label>
@@ -32,23 +50,44 @@
         </div>
 
         <!-- Subscription을 위한 nu 입력 필드 -->
-        <div class="form-group" v-if="current_resource_type === 'Subscription'">
+        <div class="form-group" v-if="selectedEntity == 'Subscription'">
           <label for="nu">Notification URI:</label>
           <input type="text" id="nu" v-model="data_obj.nu" placeholder="Enter notification URIs (comma separated)" />
         </div>
 
-        <h3>Headers</h3>
+        <h2>Headers</h2>
         <div class="form-group">
           <label>X-M2M-RI:</label>
-          <input type="text" v-model="data_obj.X_M2M_RI" />
+          <input type="text" v-model="data_obj.X_M2M_RI" placeholder="Enter RI with unique value" />
+        </div>
+        <!-- X-M2M-RVI (TinyIoT only) -->
+        <div class="form-group" v-if="!isMobius">
+          <label>X-M2M-RVI:</label>
+          <input type="text" v-model="data_obj.X_M2M_RVI" readonly/>
         </div>
         <div class="form-group">
           <label>X-M2M-Origin:</label>
-          <input type="text" v-model="data_obj.X_M2M_Origin" />
+          <input type="text" id="X-M2M-Origin" v-model="data_obj.X_M2M_Origin" placeholder="Enter Originator starts with 'C' or 'S'" />
+        </div>
+        <div class="form-group">
+          <label>Content-Type:</label>
+          <input type="text" v-model="data_obj.Content_Type" readonly/>
         </div>
         <div class="form-group">
           <label>Accept:</label>
-          <input type="text" v-model="data_obj.Accept" />
+          <input type="text" v-model="data_obj.Accept" readonly/>
+        </div>
+        <div class="form-group">
+          <label>X-API-KEY:</label>
+          <input type="text" v-model="data_obj.apikey" placeholder="Enter API Key"/>
+        </div>
+        <div class="form-group">
+          <label>X-AUTH-CUSTOM-CREATOR:</label>
+          <input type="text" v-model="data_obj.creator" placeholder="Enter Creator"/>
+        </div>
+        <div class="form-group">
+          <label>X-AUTH-CUSTOM-LECTURE:</label>
+          <input type="text" v-model="data_obj.lecture" placeholder="Enter Lecture"/>
         </div>
 
         <button type="submit" class="btn-submit">Update</button>
@@ -98,11 +137,15 @@ export default {
       selectedEntity: 'AE', // 기본 선택된 주체
       data_obj: {
         Platform_addr: '127.0.0.1:3000',
-        Res_Id: 'TinyIoT',
-        X_M2M_RI: '12345',
+        Res_Id: '',
+        X_M2M_RI: '',
         X_M2M_RVI: '2a',
-        X_M2M_Origin: 'CAdmin',
+        X_M2M_Origin: '',
         Accept: 'application/json',
+        Content_Type: 'application/json',
+        apikey: 'bpGPrGIcFf4vMHzgrOHIQxBNTJPXZHmR',
+        creator: 'sju25110182',
+        lecture: 'LCT_20250002',
 
         lbl: '',
         mni: '',
@@ -168,6 +211,11 @@ export default {
       res_mess: '',
       res_errmess: '',
       res_status: '',
+    }
+  },
+  computed: {
+    isMobius() {
+      return this.data_obj.cb === 'Mobius'
     }
   },
   methods: {
@@ -265,14 +313,21 @@ export default {
         return (this.request_text = JSON.stringify(this.req_display_obj, undefined, 2))
     },
     update_request() {
-        let url = `/${this.data_obj.Res_Id}`
+        let url = `/${this.data_obj.Res_Id}/${this.data_obj.rn}`
         const headers = {
             "X-M2M-RI": this.data_obj.X_M2M_RI,
             "X-M2M-Origin": this.data_obj.X_M2M_Origin,
-            "X-M2M-RVI": this.data_obj.X_M2M_RVI,
-            "Content-Type": this.data_obj["Content-Type"],
-            "Accept": this.data_obj.Accept
+            "Content-Type": this.data_obj.Content_Type,
+            "Accept": this.data_obj.Accept,
+            "X-API-KEY": this.data_obj.apikey,
+            "X-AUTH-CUSTOM-CREATOR": this.data_obj.creator,
+            "X-AUTH-CUSTOM-LECTURE": this.data_obj.lecture
         };
+        
+        // X-M2M-RVI는 TinyIoT일 때만 포함 (Mobius는 제외)
+        if (!this.isMobius) {
+            headers["X-M2M-RVI"] = this.data_obj.X_M2M_RVI;
+        }
 
         let body = this.data_obj.Body;
 
@@ -422,7 +477,8 @@ input::placeholder {
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  background-color: #cccccc;
+  margin-top: 20px;
 }
 
 .request h3,
@@ -452,6 +508,12 @@ input::placeholder {
   resize: none;
   color: #333; /* 텍스트 색상 */
   font-size: 14px;
+}
+
+input[readonly] {
+  background-color: #d4d2d2;  /* 배경색 약간 어둡게(아예 회색빛 넣어서 구분되게 만들었음!) */
+  color: #333;  /* 텍스트 색상 변경 */
+  cursor: not-allowed;  /* 커서 모양 변경 */
 }
 
 textarea::placeholder {

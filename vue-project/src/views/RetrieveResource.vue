@@ -14,25 +14,30 @@
     <div class="main-content">
       <!-- 입력 폼 -->
       <form @submit.prevent="handleRetrieve" class="form-section">
+        <h2>Destination</h2>
         <div class="form-group">
           <label for="platformAddress">Platform Address:</label>
           <input type="text" id="platformAddress" v-model="data_obj.Platform_addr" readonly />
         </div>
+        <div class="form-group">
+          <label for="cseBase">CSEBase:</label>
+          <input type="text" id="cseBase" v-model="data_obj.cb" placeholder="Enter CSEBase (ex. tinyIoT, Mobius)" />
+        </div>
         <div class="form-group" v-if="selectedEntity === 'AE'">
-          <label for="resourceId">Resource ID(TO) (ex. TinyIoT):</label>
-          <input type="text" id="resourceId" v-model="data_obj.Res_Id" />
+          <label for="resourceId">Resource ID (TO) (ex. CSEBase):</label>
+          <input type="text" id="resourceId" v-model="data_obj.Res_Id" placeholder="Enter parent resource path" />
         </div>
         <div class="form-group" v-if="selectedEntity === 'Container'">
-          <label for="resourceId">Resource ID(TO) (ex. TinyIoT/AE_RN):</label>
-          <input type="text" id="resourceId" v-model="data_obj.Res_Id" />
+          <label for="resourceId">Resource ID (TO) (ex. CSEBase/AE_RN):</label>
+          <input type="text" id="resourceId" v-model="data_obj.Res_Id" placeholder="Enter parent resource path" />
         </div>
         <div class="form-group" v-if="selectedEntity === 'ContentInstance'">
-          <label for="resourceId">Resource ID(TO) (ex. TinyIoT/AE_RN/CNT_RN):</label>
-          <input type="text" id="resourceId" v-model="data_obj.Res_Id" />
+          <label for="resourceId">Resource ID (TO) (ex. CSEBase/AE_RN/CNT_RN):</label>
+          <input type="text" id="resourceId" v-model="data_obj.Res_Id" placeholder="Enter parent resource path" />
         </div>
         <div class="form-group" v-if="selectedEntity === 'Subscription'">
-          <label for="resourceId">Resource ID(TO) (ex. TinyIoT/AE_RN/CNT_RN):</label>
-          <input type="text" id="resourceId" v-model="data_obj.Res_Id" />
+          <label for="resourceId">Resource ID (TO) (ex. CSEBase/AE_RN/CNT_RN):</label>
+          <input type="text" id="resourceId" v-model="data_obj.Res_Id" placeholder="Enter parent resource path" />
         </div>
         <div class="form-group">
           <label for="resourceName">{{ selectedEntity }} Resource Name:</label>
@@ -40,18 +45,35 @@
         </div>
 
 
-        <h3>Headers</h3>
+        <h2>Headers</h2>
         <div class="form-group">
           <label>X-M2M-RI:</label>
-          <input type="text" v-model="data_obj.X_M2M_RI" />
+          <input type="text" v-model="data_obj.X_M2M_RI" placeholder="Enter RI with unique value" />
+        </div>
+        <!-- X-M2M-RVI (TinyIoT only) -->
+        <div class="form-group" v-if="!isMobius">
+          <label>X-M2M-RVI:</label>
+          <input type="text" v-model="data_obj.X_M2M_RVI" readonly />
         </div>
         <div class="form-group">
           <label>X-M2M-Origin:</label>
-          <input type="text" v-model="data_obj.X_M2M_Origin" />
+          <input type="text" id="X-M2M-Origin" v-model="data_obj.X_M2M_Origin" placeholder="Enter Originator starts with 'C' or 'S'" />
         </div>
         <div class="form-group">
           <label>Accept:</label>
-          <input type="text" v-model="data_obj.Accept" />
+          <input type="text" v-model="data_obj.Accept" readonly />
+        </div>
+        <div class="form-group">
+          <label>X-API-KEY:</label>
+          <input type="text" v-model="data_obj.apikey" placeholder="Enter API Key"/>
+        </div>
+        <div class="form-group">
+          <label>X-AUTH-CUSTOM-CREATOR:</label>
+          <input type="text" v-model="data_obj.creator" placeholder="Enter Creator"/>
+        </div>
+        <div class="form-group">
+          <label>X-AUTH-CUSTOM-LECTURE:</label>
+          <input type="text" v-model="data_obj.lecture" placeholder="Enter Lecture"/>
         </div>
 
         <button type="submit" class="btn-submit">Retrieve</button>
@@ -101,12 +123,16 @@ export default {
       selectedEntity: 'AE', // 기본 선택된 주체
       data_obj: {
         Platform_addr: '127.0.0.1:3000',
-        Res_Id: 'TinyIoT',
-        X_M2M_RI: "12345",
-        X_M2M_RVI: "2a",
-        X_M2M_Origin: "CAdmin",
-        Accept: "application/json",
-        Retrieve_text: "GET",
+        cb: '',
+        Res_Id: '',
+        X_M2M_RI: '',
+        X_M2M_RVI: '2a',
+        X_M2M_Origin: '',
+        Accept: 'application/json',
+        apikey: 'bpGPrGIcFf4vMHzgrOHIQxBNTJPXZHmR',
+        creator: 'sju25110182',
+        lecture: 'LCT_20250002',
+        Retrieve_text: 'GET',
       },
       req_fields: [
         { key: 'X-M2M-RI', class: 'text-center' },
@@ -139,6 +165,11 @@ export default {
       res_mess: "",
       res_errmess: "",
       res_status: "",
+    }
+  },
+  computed: {
+    isMobius() {
+      return this.data_obj.cb === 'Mobius'
     }
   },
   methods: {
@@ -261,9 +292,16 @@ export default {
 
       const headers = {};
       headers["X-M2M-RI"] = this.data_obj.X_M2M_RI;
-      headers["X-M2M-RVI"] = this.data_obj.X_M2M_RVI;
       headers["X-M2M-Origin"] = this.data_obj.X_M2M_Origin;
       headers["Accept"] = this.data_obj.Accept;
+      headers["X-API-KEY"] = this.data_obj.apikey;
+      headers["X-AUTH-CUSTOM-CREATOR"] = this.data_obj.creator;
+      headers["X-AUTH-CUSTOM-LECTURE"] = this.data_obj.lecture;
+      
+      // X-M2M-RVI는 TinyIoT일 때만 포함 (Mobius는 제외)
+      if (!this.isMobius) {
+        headers["X-M2M-RVI"] = this.data_obj.X_M2M_RVI;
+      }
 
       this.request_header_change(headers);
       axios
@@ -401,7 +439,8 @@ input::placeholder {
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  background-color: #cccccc;
+  margin-top: 20px;
 }
 
 .request h3,
@@ -431,6 +470,12 @@ input::placeholder {
   resize: none;
   color: #333; /* 텍스트 색상 */
   font-size: 14px;
+}
+
+input[readonly] {
+  background-color: #d4d2d2;  /* 배경색 약간 어둡게 */
+  color: #333;  /* 텍스트 색상 변경 */
+  cursor: not-allowed;  /* 커서 모양 변경 */
 }
 
 textarea::placeholder {

@@ -4,21 +4,53 @@
 
     <!-- 입력 폼 -->
     <form @submit.prevent="handleDelete" class="form-section">
+      <h2>Destination</h2>
       <div class="form-group">
         <label>Platform Address:</label>
         <input type="text" v-model="data_obj.Platform_addr" readonly />
       </div>
       <div class="form-group">
         <label>CSEBase:</label>
-        <input type="text" v-model="data_obj.Res_Id" readonly />
+        <input type="text" v-model="data_obj.cb" placeholder="Enter CSEBase (ex. tinyIoT, Mobius)" />
+      </div>
+      <div class="form-group">
+        <label>Resource ID (TO) (ex. CSEBase/AE_RN):</label>
+        <input type="text" v-model="data_obj.Res_Id" placeholder="Enter parent resource path" />
       </div>
       <div class="form-group">
         <label>Resource Name to Delete:</label>
-        <input type="text" v-model="data_obj.rn" placeholder="Enter Resource Name (ex. myAE/cnt_name/cni_name)" />
+        <input type="text" v-model="data_obj.rn" placeholder="Enter Resource Name to delete" />
+      </div>
+
+      <h2>Headers</h2>
+      <div class="form-group">
+        <label>X-M2M-RI:</label>
+        <input type="text" v-model="data_obj.X_M2M_RI" placeholder="Enter RI with unique value" />
+      </div>
+      <!-- X-M2M-RVI (TinyIoT only) -->
+      <div class="form-group" v-if="!isMobius">
+        <label>X-M2M-RVI:</label>
+        <input type="text" v-model="data_obj.X_M2M_RVI" readonly />
       </div>
       <div class="form-group">
-        <label>X-M2M-RVI:</label>
-        <input type="text" v-model="data_obj.X_M2M_RVI" placeholder="Enter X-M2M-RVI (e.g., 2a)" />
+        <label>X-M2M-Origin:</label>
+        <input type="text" v-model="data_obj.X_M2M_Origin" placeholder="Enter Originator starts with 'C' or 'S'" />
+      </div>
+      <div class="form-group">
+        <label>Accept:</label>
+        <input type="text" v-model="data_obj.Accept" readonly />
+      </div>
+      <div class="form-group">
+        <label>X-API-KEY:</label>
+        <input type="text" v-model="data_obj.apikey" placeholder="Enter API Key"/>
+      </div>
+      <div class="form-group">
+        <label>X-AUTH-CUSTOM-CREATOR:</label>
+        <input type="text" v-model="data_obj.creator" placeholder="Enter Creator"/>
+      </div>
+      <div class="form-group">
+        <label>X-AUTH-CUSTOM-LECTURE:</label>
+        <input type="text" v-model="data_obj.lecture" placeholder="Enter Lecture"/>
       </div>
 
       <!-- 삭제 버튼 -->
@@ -66,11 +98,15 @@ export default {
     return {
       data_obj: {
         Platform_addr: "127.0.0.1:3000",
-        Res_Id: "TinyIoT",
-        X_M2M_RI: "12345",
-        X_M2M_Origin: "CAdmin",
-        X_M2M_RVI: "2a", // 기본값 설정 가능
+        cb: "",
+        Res_Id: "",
+        X_M2M_RI: "",
+        X_M2M_Origin: "",
+        X_M2M_RVI: "2a",
         Accept: "application/json",
+        apikey: 'bpGPrGIcFf4vMHzgrOHIQxBNTJPXZHmR',
+        creator: 'sju25110182',
+        lecture: 'LCT_20250002',
         rn: "",
       },
       res_items: [
@@ -86,6 +122,11 @@ export default {
       response_text: '',
     };
   },
+  computed: {
+    isMobius() {
+      return this.data_obj.cb === 'Mobius'
+    }
+  },
   methods: {
     handleDelete() {
       this.delete_request();
@@ -96,23 +137,38 @@ export default {
       const headers = {
         'X-M2M-RI': this.data_obj.X_M2M_RI,
         'X-M2M-Origin': this.data_obj.X_M2M_Origin,
-        'X-M2M-RVI': this.data_obj.X_M2M_RVI, // X-M2M-RVI 추가
         'Accept': this.data_obj.Accept,
+        'X-API-KEY': this.data_obj.apikey,
+        'X-AUTH-CUSTOM-CREATOR': this.data_obj.creator,
+        'X-AUTH-CUSTOM-LECTURE': this.data_obj.lecture,
       };
+      
+      // X-M2M-RVI는 TinyIoT일 때만 포함 (Mobius는 제외)
+      if (!this.isMobius) {
+        headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI;
+      }
+
+      console.log('=== POST Request Debug ===');
+      console.log('URL:', url);
+      console.log('Headers:', headers);
+      console.log('apikey value:', this.data_obj.apikey);
+      console.log('creator value:', this.data_obj.creator);
+      console.log('lecture value:', this.data_obj.lecture);
+      
 
       this.request_text = { headers };
 
       axios.delete(url, { headers })
         .then((response) => {
           this.response_text = 'Resource has been deleted successfully.';
-          this.updateResponseHeaders(response.headers);
+          console.log('Delete Response Headers:', response.headers);
         })
         .catch((error) => {
           // 실패 시 응답 바디 내용만 표시
           this.response_text = error.response?.data
             ? JSON.stringify(error.response.data, null, 2)
             : error.message;
-          this.updateResponseHeaders(error.response?.headers || {});
+          console.log('Delete Error Headers:', error.response?.headers);
         });
     }
   },
@@ -236,7 +292,8 @@ input::placeholder {
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  background-color: #cccccc;
+  margin-top: 20px;
 }
 
 .request h3,
@@ -267,8 +324,15 @@ input::placeholder {
   font-size: 14px;
 }
 
+input[readonly] {
+  background-color: #d4d2d2;  /* 배경색 약간 어둡게 */
+  color: #333;  /* 텍스트 색상 변경 */
+  cursor: not-allowed;  /* 커서 모양 변경 */
+}
+
 textarea::placeholder {
-  color: #888;
-  /* 텍스트 에어리어 플레이스홀더 색상 */
+  height: fit-content;
+  color: #888; /* 텍스트 에어리어 플레이스홀더 색상 */
+  height: fit-content;
 }
 </style>

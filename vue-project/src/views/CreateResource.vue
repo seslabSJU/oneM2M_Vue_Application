@@ -19,8 +19,24 @@
           <input type="text" id="platformAddress" v-model="data_obj.Platform_addr" readonly />
         </div>
         <div class="form-group">
-          <label for="resourceId">Resource ID (To):</label>
-          <input type="text" id="resourceId" v-model="data_obj.Res_Id" />
+          <label for="cseBase">CSEBase:</label>
+          <input type="text" id="cseBase" v-model="data_obj.cb" placeholder="Enter CSEBase (ex. tinyIoT, Mobius)" />
+        </div>
+        <div class="form-group" v-if="selectedEntity === 'AE'">
+          <label for="resourceId">Resource ID (TO) (ex. CSEBase):</label>
+          <input type="text" id="resourceId" v-model="data_obj.Res_Id" placeholder="Enter parent resource path" />
+        </div>
+        <div class="form-group" v-if="selectedEntity === 'Container'">
+          <label for="resourceId">Resource ID (TO) (ex. CSEBase/AE_RN):</label>
+          <input type="text" id="resourceId" v-model="data_obj.Res_Id" placeholder="Enter parent resource path" />
+        </div>
+        <div class="form-group" v-if="selectedEntity === 'ContentInstance'">
+          <label for="resourceId">Resource ID (TO) (ex. CSEBase/AE_RN/CNT_RN):</label>
+          <input type="text" id="resourceId" v-model="data_obj.Res_Id" placeholder="Enter parent resource path" />
+        </div>
+        <div class="form-group" v-if="selectedEntity === 'Subscription'">
+          <label for="resourceId">Resource ID (TO) (ex. CSEBase/AE_RN/CNT_RN):</label>
+          <input type="text" id="resourceId" v-model="data_obj.Res_Id" placeholder="Enter parent resource path" />
         </div>
         <h2>Body</h2>
         <div class="form-group">
@@ -63,8 +79,8 @@
           <label class="required" for="rr">rr (Request Reachability):</label>
           <input type="none" id="rr" v-model="data_obj.rr" readonly />
         </div>
-        <!-- Srv -->
-        <div class="form-group" v-if="selectedEntity === 'AE'">
+        <!-- Srv (TinyIoT only) -->
+        <div class="form-group" v-if="selectedEntity === 'AE' && !isMobius">
           <label class="required" for="srv">srv (Supported Release Version):</label>
           <input type="none" id="srv" v-model="data_obj.srv" readonly />
         </div>
@@ -85,9 +101,10 @@
         <h2>Headers</h2>
         <div class="form-group">
           <label>X-M2M-RI:</label>
-          <input type="text" v-model="data_obj.X_M2M_RI" />
+          <input type="text" v-model="data_obj.X_M2M_RI" placeholder="Enter RI with unique value"/>
         </div>
-        <div class="form-group">
+        <!-- X-M2M-RVI (TinyIoT only) -->
+        <div class="form-group" v-if="!isMobius">
           <label>X-M2M-RVI:</label>
           <input type="text" v-model="data_obj.X_M2M_RVI" readonly/>
         </div>
@@ -102,6 +119,18 @@
         <div class="form-group">
           <label>Accept:</label>
           <input type="text" v-model="data_obj.Accept" readonly/>
+        </div>
+        <div class="form-group">
+          <label>X-API-KEY:</label>
+          <input type="text" v-model="data_obj.apikey" placeholder="Enter API Key"/>
+        </div>
+        <div class="form-group">
+          <label>X-AUTH-CUSTOM-CREATOR:</label>
+          <input type="text" v-model="data_obj.creator" placeholder="Enter Creator"/>
+        </div>
+        <div class="form-group">
+          <label>X-AUTH-CUSTOM-LECTURE:</label>
+          <input type="text" v-model="data_obj.lecture" placeholder="Enter Lecture"/>
         </div>
 
         <button type="submit" class="btn-submit">Send</button>
@@ -150,12 +179,15 @@ export default {
       selectedEntity: 'AE', // 기본 선택된 주체
       data_obj: {
         Platform_addr: '127.0.0.1:3000',
-        Res_Id: 'TinyIoT',
-        X_M2M_RI: 'create',
+        Res_Id: '',
+        X_M2M_RI: '',
         X_M2M_RVI: '2a',
         X_M2M_Origin: '',
         Content_Type: 'application/json;ty=2',
         Accept: 'application/json',
+        apikey: '',
+        creator: '',
+        lecture: '',
 
         lbl: [],
         mni: '',
@@ -216,12 +248,17 @@ export default {
       res_status: '',
     }
   },
+  computed: {
+    isMobius() {
+      return this.data_obj.cb === 'Mobius' 
+    }
+  },
   methods: {
     selectEntity(entity) {
       this.selectedEntity = entity;
       this.data_obj.rn = ''
       this.data_obj.lbl = []
-      this.data_obj.Res_Id = 'TinyIoT'
+      this.data_obj.Res_Id = ''
       this.data_obj.X_M2M_Origin = ''
       this.data_obj.mni = ''
       this.data_obj.mbs = ''
@@ -267,7 +304,7 @@ export default {
       this.req_items[0]['X-M2M-RI'] = obj['X-M2M-RI']
       this.req_items[0]['X-M2M-Origin'] = obj['X-M2M-Origin']
       this.req_items[0]['Content-Type'] = obj['Content-Type']
-      this.req_items[0]['Content-RVI'] = obj['2a']
+      this.req_items[0]['X-M2M-RVI'] = obj['2a']
       this.req_items[0]['Accept'] = obj['Accept']
       // this.$refs.reqtable.refresh()
     },
@@ -297,7 +334,10 @@ export default {
         ae_obj['m2m:ae'].api = this.data_obj.api.concat(this.data_obj.rn)
         ae_obj['m2m:ae'].rr = this.data_obj.rr
       }
-      ae_obj['m2m:ae'].srv = this.data_obj.srv
+      // srv는 TinyIoT일 때만 포함 (Mobius는 제외)
+      if (!this.isMobius) {
+        ae_obj['m2m:ae'].srv = this.data_obj.srv
+      }
       this.data_obj.Content_Type = 'application/json;ty=2'
       this.data_obj['Body'] = ae_obj
 
@@ -385,9 +425,17 @@ export default {
       }
       else alert('Enter Notification URI(nu)')
       if (this.data_obj.nct != '') sub_obj['m2m:sub'].nct = parseInt(this.data_obj.nct)
-      if (this.data_obj.enc != '') {
-        sub_obj['m2m:sub'].enc = {
-          net: this.data_obj.net.split(',').map(item => parseInt(item.trim())).filter(item => !isNaN(item))
+      // net 값이 있으면 enc 객체 생성
+      if (this.data_obj.net != '' && this.data_obj.net != null) {
+        let netArray;
+        if (Array.isArray(this.data_obj.net)) {
+          netArray = this.data_obj.net;
+        } else {
+          // 문자열이면 파싱
+          netArray = this.data_obj.net.split(',').map(item => parseInt(item.trim())).filter(item => !isNaN(item));
+        }
+        if (netArray.length > 0) {
+          sub_obj['m2m:sub'].enc = { net: netArray };
         }
       }
       if (this.data_obj.exc != '') sub_obj['m2m:sub'].exc = parseInt(this.data_obj.exc)
@@ -406,101 +454,30 @@ export default {
       this.request_header_change(headers)
       return (this.request_text = JSON.stringify(this.req_display_obj, undefined, 2))
     },
-    createRemoteCSE() {
-      let csr_obj = {}
-      csr_obj['m2m:csr'] = {}
-      if (this.data_obj.rn != '') csr_obj['m2m:csr'].rn = this.data_obj.rn
-      if (this.data_obj.cb != '') csr_obj['m2m:csr'].cb = this.data_obj.cb
-      else alert('Enter Callback URI(cb)') // not quite sure about this
-      if (this.data_obj.rr != '') csr_obj['m2m:csr'].rr = this.data_obj.rr
-      if (this.data_obj.csi != '') csr_obj['m2m:csr'].csi = this.data_obj.csi
-      if (this.data_obj.poa.length > 0) csr_obj['m2m:csr'].poa = this.data_obj.poa
-          .split(',')
-          .map(item => item.trim())
-          .filter(item => item !== '')
-      if (this.data_obj.srv.length > 0) csr_obj['m2m:csr'].srv = this.data_obj.srv
-          .split(',')
-          .map(item => item.trim())
-          .filter(item => item !== '')
-
-      this.data_obj['Content-Type'] = 'application/json;ty=16'
-      this.data_obj['Body'] = csr_obj
-
-      let headers = {}
-      headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
-      headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
-      headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
-      headers['Content-Type'] = this.data_obj['Content-Type']
-      headers['Accept'] = this.data_obj.Accept
-
-      this.req_display_obj = csr_obj
-      this.request_header_change(headers)
-      return (this.request_text = JSON.stringify(this.req_display_obj, undefined, 2))
-    },
-    createACP(){
-      let acp_obj = {}
-
-      acp_obj['m2m:acp'] = {}
-      acp_obj['m2m:acp'].pv = {}
-      acp_obj['m2m:acp'].pvs = {}
-      if(this.data_obj.rn != '') acp_obj['m2m:acp'].rn = this.data_obj.rn
-      acp_obj['m2m:acp'].pv.acr = this.data_obj.pv_acr
-          .split(',')
-          .filter(item => item !== '')
-      acp_obj['m2m:acp'].pvs.acr = this.data_obj.pvs_acr
-          .split(',')
-          .filter(item => item !== '')
-
-      this.data_obj['Content-Type'] = 'application/json;ty=1'
-      this.data_obj['Body'] = acp_obj
-
-      let headers = {}
-      headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
-      headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
-      headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
-      headers['Content-Type'] = this.data_obj['Content-Type']
-      headers['Accept'] = this.data_obj.Accept
-
-      this.req_display_obj = acp_obj
-      this.request_header_change(headers)
-      return (this.request_text = JSON.stringify(this.req_display_obj, undefined, 2))
-    },
-    createGRP(){
-      let grp_obj = {}
-      grp_obj['m2m:grp'] = {}
-      if(this.data_obj.rn != '') grp_obj['m2m:grp'].rn = this.data_obj.rn
-      if(this.data_obj.mid.length > 0) grp_obj['m2m:grp'].mid = this.data_obj.mid
-          .split(',')
-          .map(item => item.trim())
-          .filter(item => item !== '')
-      if(this.data_obj.mnm != '') grp_obj['m2m:grp'].mnm = this.data_obj.mnm
-      if(this.data_obj.mt != '') grp_obj['m2m:grp'].mt = this.data_obj.mt
-      if(this.data_obj.csy != '') grp_obj['m2m:grp'].csy = this.data_obj.csy
-
-      this.data_obj['Content-Type'] = 'application/json;ty=9'
-      this.data_obj['Body'] = grp_obj
-
-      let headers = {}
-      headers['X-M2M-RI'] = this.data_obj.X_M2M_RI
-      headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI
-      headers['X-M2M-Origin'] = this.data_obj.X_M2M_Origin
-      headers['Content-Type'] = this.data_obj['Content-Type']
-      headers['Accept'] = this.data_obj.Accept
-
-      this.req_display_obj = grp_obj
-      this.request_header_change(headers)
-      return (this.request_text = JSON.stringify(this.req_display_obj, undefined, 2))
-    },
     post_request() {
       let url = `/${this.data_obj.Res_Id}`;
       const headers = {
         "X-M2M-RI": this.data_obj.X_M2M_RI,
         "X-M2M-Origin": this.data_obj.X_M2M_Origin,
-        "X-M2M-RVI": this.data_obj.X_M2M_RVI,
-        "Content-Type": this.data_obj["Content-Type"],
-        "Accept": this.data_obj.Accept
+        "Content-Type": this.data_obj.Content_Type,
+        "Accept": this.data_obj.Accept,
+        "X-API-KEY": this.data_obj.apikey,
+        "X-AUTH-CUSTOM-CREATOR": this.data_obj.creator,
+        "X-AUTH-CUSTOM-LECTURE": this.data_obj.lecture
       };
+      
+      // X-M2M-RVI는 TinyIoT일 때만 포함 (Mobius는 제외)
+      if (!this.isMobius) {
+        headers["X-M2M-RVI"] = this.data_obj.X_M2M_RVI;
+      }
 
+      console.log('=== POST Request Debug ===');
+      console.log('URL:', url);
+      console.log('Headers:', headers);
+      console.log('apikey value:', this.data_obj.apikey);
+      console.log('creator value:', this.data_obj.creator);
+      console.log('lecture value:', this.data_obj.lecture);
+      
       let body = this.data_obj.Body;
       axios.post(url, body, { headers })
         .then((response) => {
@@ -685,5 +662,11 @@ input[readonly] {
     content: '*';
     color: red; /* 또는 원하는 색상 */
     margin-right: 2px; /* 필요한 경우 여백 조정 */
+}
+
+textarea::placeholder {
+  height: fit-content;
+  color: #888; /* 텍스트 에어리어 플레이스홀더 색상 */
+  height: fit-content;
 }
 </style>
