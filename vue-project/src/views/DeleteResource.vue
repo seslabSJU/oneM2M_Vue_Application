@@ -97,7 +97,7 @@ export default {
   data() {
     return {
       data_obj: {
-        Platform_addr: "127.0.0.1:3000",
+        Platform_addr: "https://onem2m.iotcoss.ac.kr",
         cb: "",
         Res_Id: "",
         X_M2M_RI: "",

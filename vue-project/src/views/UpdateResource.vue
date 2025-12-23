@@ -136,7 +136,7 @@ export default {
       entities: ['AE', 'Container', 'Subscription'], // 주체 목록
       selectedEntity: 'AE', // 기본 선택된 주체
       data_obj: {
-        Platform_addr: '127.0.0.1:3000',
+        Platform_addr: 'https://onem2m.iotcoss.ac.kr',
         Res_Id: '',
         X_M2M_RI: '',
         X_M2M_RVI: '2a',
