@@ -92,6 +92,7 @@
 
 <script>
 import axios from "axios";
+import { defaultHeaders } from '../config/headers.js'
 
 export default {
   data() {
@@ -104,9 +105,9 @@ export default {
         X_M2M_Origin: "",
         X_M2M_RVI: "2a",
         Accept: "application/json",
-        apikey: '',
-        creator: '',
-        lecture: '',
+        apikey: defaultHeaders.apiKey,
+        creator: defaultHeaders.creator,
+        lecture: defaultHeaders.lecture,
         rn: "",
       },
       res_items: [
