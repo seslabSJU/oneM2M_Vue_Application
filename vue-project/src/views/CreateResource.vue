@@ -488,13 +488,6 @@ export default {
       if (!this.isMobius) {
         headers["X-M2M-RVI"] = this.data_obj.X_M2M_RVI;
       }
-
-      console.log('=== POST Request Debug ===');
-      console.log('URL:', url);
-      console.log('Headers:', headers);
-      console.log('apikey value:', this.data_obj.apikey);
-      console.log('creator value:', this.data_obj.creator);
-      console.log('lecture value:', this.data_obj.lecture);
       
       let body = this.data_obj.Body;
       axios.post(url, body, { headers })

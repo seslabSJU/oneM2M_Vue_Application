@@ -173,14 +173,6 @@ export default {
         headers['X-M2M-RVI'] = this.data_obj.X_M2M_RVI;
       }
 
-      console.log('=== POST Request Debug ===');
-      console.log('URL:', url);
-      console.log('Headers:', headers);
-      console.log('apikey value:', this.data_obj.apikey);
-      console.log('creator value:', this.data_obj.creator);
-      console.log('lecture value:', this.data_obj.lecture);
-      
-
       this.request_text = JSON.stringify({ headers }, null, 2);
 
       axios.delete(url, { headers })
