@@ -7,8 +7,8 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: 'http://localhost:4000', // Vue 앱의 주소
-        methods: ['GET', 'POST'], // 허용할 HTTP 메서드
+        origin: '*', // 모든 origin 허용 
+        methods: ['GET', 'POST'],
     },
 });
 
@@ -28,12 +28,16 @@ function createHeaders(origin, requestId, timestamp, responseCode) {
 // JSON 데이터 처리
 const cors = require('cors')
 app.use(cors({
-    origin: 'http://localhost:4000', // Vue 앱의 주소
+    origin: '*', // 모든 origin 허용 (ngrok 포함)
 }));
-app.use(bodyParser.json());
 
-// /notifications 엔드포인트
-app.post('/notifications', (req, res) => {
+// oneM2M Content-Type 처리 (application/json 및 oneM2M 전용 타입)
+app.use(bodyParser.json({ 
+    type: ['application/json', 'application/vnd.onem2m-ntfy+json', 'application/*+json'] 
+}));
+
+// /notifications 및 루트(/) 엔드포인트 (TinyIoT 호환)
+const handleNotification = (req, res) => {
     const notification = req.body;
     console.log('Received notification:', notification);
 
@@ -58,7 +62,11 @@ app.post('/notifications', (req, res) => {
 
     // 성공 응답
     res.status(200).json({ message: 'Notification processed successfully.' });
-});
+};
+
+// 두 경로 모두 지원 (TinyIoT: /, 일반: /notifications)
+app.post('/', handleNotification);
+app.post('/notifications', handleNotification);
 
 // WebSocket 연결 확인
 io.on('connection', (socket) => {

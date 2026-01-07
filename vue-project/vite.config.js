@@ -6,7 +6,7 @@ export default defineConfig({
   server: {
     port:4000,
     proxy:{
-      '/TinyIoT': {
+      '/tinyIoT': {
         target: 'https://onem2m.iotcoss.ac.kr',
         changeOrigin: true,
         secure: true
@@ -15,7 +15,12 @@ export default defineConfig({
         target: 'https://onem2m.iotcoss.ac.kr',
         changeOrigin: true,
         secure: true
-      }
+      },
+      /*'/TinyIoT': {
+        target: '127.0.0.1:3000',
+        changeOrigin: true,
+        secure: false
+      }*/
     },
   },
 })

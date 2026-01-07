@@ -1,12 +1,16 @@
 <template>
   <div class="update-resource">
+    <!-- 토스트 알림 -->
+    <div v-if="toast.show" :class="['toast', toast.type]">
+      {{ toast.message }}
+    </div>
     <h2>Update Resource</h2>
 
     <!-- 주체 선택 버튼 -->
     <div class="entity-selection">
       <button v-for="entity in entities"
               :key="entity"
-              class="entity-button"
+              :class="['entity-button', { active: selectedEntity === entity }]"
               @click="selectEntity(entity)">
         {{ entity }}
       </button>
@@ -23,7 +27,11 @@
         </div>
         <div class="form-group">
           <label for="cseBase">CSEBase:</label>
-          <input type="text" id="cseBase" v-model="data_obj.cb" placeholder="Enter CSEBase (ex. tinyIoT, Mobius)" />
+          <select id="cseBase" v-model="data_obj.cb">
+            <option value="" disabled>Select CSEBase</option>
+            <option value="tinyIoT">tinyIoT</option>
+            <option value="Mobius">Mobius</option>
+          </select>
         </div>
         <div class="form-group" v-if="selectedEntity === 'AE'">
           <label for="resourceId">Resource ID (TO) (ex. CSEBase):</label>
@@ -58,7 +66,7 @@
         <h2>Headers</h2>
         <div class="form-group">
           <label>X-M2M-RI:</label>
-          <input type="text" v-model="data_obj.X_M2M_RI" placeholder="Enter RI with unique value" />
+          <input type="text" id="x-m2m-ri" v-model="data_obj.X_M2M_RI" placeholder="Enter RI with unique value" />
         </div>
         <!-- X-M2M-RVI (TinyIoT only) -->
         <div class="form-group" v-if="!isMobius">
@@ -67,7 +75,9 @@
         </div>
         <div class="form-group">
           <label>X-M2M-Origin:</label>
-          <input type="text" id="X-M2M-Origin" v-model="data_obj.X_M2M_Origin" placeholder="Enter Originator starts with 'C' or 'S'" />
+          <!-- Mobius: 사용자 입력, TinyIoT: CAdmin 고정 -->
+          <input v-if="isMobius" type="text" id="X-M2M-Origin" v-model="data_obj.X_M2M_Origin" placeholder="Enter Originator starts with 'C' or 'S'" />
+          <input v-else type="text" value="CAdmin" readonly />
         </div>
         <div class="form-group">
           <label>Content-Type:</label>
@@ -79,15 +89,15 @@
         </div>
         <div class="form-group">
           <label>X-API-KEY:</label>
-          <input type="text" v-model="data_obj.apikey" placeholder="Enter API Key"/>
+          <input type="text" id="x-api-key" v-model="data_obj.apikey" placeholder="Enter API Key"/>
         </div>
         <div class="form-group">
           <label>X-AUTH-CUSTOM-CREATOR:</label>
-          <input type="text" v-model="data_obj.creator" placeholder="Enter Creator"/>
+          <input type="text" id="x-auth-creator" v-model="data_obj.creator" placeholder="Enter Creator"/>
         </div>
         <div class="form-group">
           <label>X-AUTH-CUSTOM-LECTURE:</label>
-          <input type="text" v-model="data_obj.lecture" placeholder="Enter Lecture"/>
+          <input type="text" id="x-auth-lecture" v-model="data_obj.lecture" placeholder="Enter Lecture"/>
         </div>
 
         <button type="submit" class="btn-submit">Update</button>
@@ -212,6 +222,11 @@ export default {
       res_mess: '',
       res_errmess: '',
       res_status: '',
+      toast: {
+        show: false,
+        message: '',
+        type: 'info'
+      }
     }
   },
   computed: {
@@ -224,8 +239,14 @@ export default {
       this.selectedEntity = entity;
       console.log(`Selected Entity: ${entity}`);
     },
+    showToast(message, type = 'info') {
+      this.toast = { show: true, message, type };
+      setTimeout(() => {
+        this.toast.show = false;
+      }, 3000);
+    },
     handleUpdate() {
-      alert(`Updating... ${this.data_obj.Res_Id}`);
+      this.showToast(`Updating ${this.selectedEntity}...`, 'info');
       switch(this.selectedEntity){
         case 'AE':
           console.log(this.updateAE())
@@ -315,9 +336,13 @@ export default {
     },
     update_request() {
         let url = `/${this.data_obj.Res_Id}/${this.data_obj.rn}`
+        
+        // TinyIoT면 CAdmin 고정, Mobius면 사용자 입력값 사용
+        const originator = this.isMobius ? this.data_obj.X_M2M_Origin : 'CAdmin';
+
         const headers = {
             "X-M2M-RI": this.data_obj.X_M2M_RI,
-            "X-M2M-Origin": this.data_obj.X_M2M_Origin,
+            "X-M2M-Origin": originator,
             "Content-Type": this.data_obj.Content_Type,
             "Accept": this.data_obj.Accept,
             "X-API-KEY": this.data_obj.apikey,
@@ -357,12 +382,24 @@ export default {
     handleSuccess(response) {
       this.res_mess = response.data;
       this.response_text = JSON.stringify(this.res_mess, undefined, 2);
+      this.showToast('Resource updated successfully!', 'success');
     },
 
   // 에러 응답 처리를 위한 헬퍼 메소드
     handleError(error) {
-      this.res_errmess = error.response.data;
-      this.response_text = this.res_errmess;
+      if (error.response) {
+        this.res_errmess = error.response.data;
+        this.response_text = typeof this.res_errmess === 'object' 
+          ? JSON.stringify(this.res_errmess, null, 2) 
+          : this.res_errmess;
+        this.showToast(`Error: ${error.response.status}`, 'error');
+      } else if (error.request) {
+        this.response_text = 'Network Error: No response from server';
+        this.showToast('Network Error: No response from server', 'error');
+      } else {
+        this.response_text = `Error: ${error.message}`;
+        this.showToast(`Error: ${error.message}`, 'error');
+      }
     },
   }
 }
@@ -411,6 +448,11 @@ h2 {
   background-color: #0056b3;
 }
 
+.entity-button.active {
+  background-color: #28a745;
+  box-shadow: 0 2px 8px rgba(40, 167, 69, 0.4);
+}
+
 .main-content {
   display: contents;
 
@@ -436,13 +478,14 @@ label {
   color: #333; /* 더 진한 텍스트 색상 */
 }
 
-input {
+input, select {
   width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
   font-size: 14px; /* 입력 필드 텍스트 크기 */
   color: #333; /* 입력 텍스트 색상 */
+  background-color: #fff;
 }
 
 input::placeholder {
@@ -521,5 +564,51 @@ textarea::placeholder {
   height: fit-content;
   color: #888; /* 텍스트 에어리어 플레이스홀더 색상 */
   height: fit-content;
+}
+
+/* 토스트 알림 스타일 */
+.toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 16px 24px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 500;
+  z-index: 9999;
+  animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.toast.info {
+  background-color: #3498db;
+}
+
+.toast.success {
+  background-color: #27ae60;
+}
+
+.toast.error {
+  background-color: #e74c3c;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 </style>
