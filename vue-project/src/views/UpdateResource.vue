@@ -66,7 +66,7 @@
         <h2>Headers</h2>
         <div class="form-group">
           <label>X-M2M-RI:</label>
-          <input type="text" id="x-m2m-ri" v-model="data_obj.X_M2M_RI" placeholder="Enter RI with unique value" />
+          <input type="text" id="x-m2m-ri" name="x-m2m-ri" autocomplete="on" v-model="data_obj.X_M2M_RI" placeholder="Enter RI with unique value" />
         </div>
         <!-- X-M2M-RVI (TinyIoT only) -->
         <div class="form-group" v-if="!isMobius">
@@ -89,15 +89,15 @@
         </div>
         <div class="form-group">
           <label>X-API-KEY:</label>
-          <input type="text" id="x-api-key" v-model="data_obj.apikey" placeholder="Enter API Key"/>
+          <input type="text" id="onem2m-apicode" name="onem2m-apicode" autocomplete="on" v-model="data_obj.apikey" placeholder="Enter API Key"/>
         </div>
         <div class="form-group">
           <label>X-AUTH-CUSTOM-CREATOR:</label>
-          <input type="text" id="x-auth-creator" v-model="data_obj.creator" placeholder="Enter Creator"/>
+          <input type="text" id="onem2m-creator" name="onem2m-creator" autocomplete="on" v-model="data_obj.creator" placeholder="Enter Creator"/>
         </div>
         <div class="form-group">
           <label>X-AUTH-CUSTOM-LECTURE:</label>
-          <input type="text" id="x-auth-lecture" v-model="data_obj.lecture" placeholder="Enter Lecture"/>
+          <input type="text" id="onem2m-lecture" name="onem2m-lecture" autocomplete="on" v-model="data_obj.lecture" placeholder="Enter Lecture"/>
         </div>
 
         <button type="submit" class="btn-submit">Update</button>
