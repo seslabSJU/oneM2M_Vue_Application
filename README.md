@@ -1,67 +1,74 @@
 # oneM2M Vue Application - Guide
 
-## Installation
+## 설치
 
-1. Requirements before installation
-    1. Download or Clone Code from Github
-    2. Install nvm
-    3. Install node.js v22.12.0 (If it’s not installed)
+1. app 설치 전 필수 요소들 설치 
+    
+    1. Github 에서 코드 다운로드 또는 클론
+    2. nvm 설치
+    3. node.js v22.12.0 설치 (설치되지 않은 경우)
         
-        ```powershell
-        # Install node.js
-        $ nvm install v22.12.0
-        # To check the version of node.js
-        $ node.js -v
-        ```
+    ```powershell
+    # node.js 설치
+    $ nvm install v22.12.0
+    # node.js의 버전 확인
+    $ node.js -v
+    ```
         
-2. Run codes in console opened in ‘**vue-project’** directory
+2. ‘**vue-project’** 디렉토리로 이동하여 코드를 실행 
     
     ```powershell
     $ npm install
-    $ npm run serve # or npm run dev
+    $ npm run dev # or npm run serve 
     ```
     
 
-## Features
+## 지원 기능
 
 1. Create Request
-    1. Click Create Button
-    2. Fill editable attributes(Some are mandatory.) + body
-    3. Click Send Button
-    4. If it’s successfully retrieved the resource, response body will appear message from server. 
-    5. If not, response body will appear nothing or error code.
+    1. 좌측 메뉴에서 create 선택 
+    2. CSEBase 선택 
+    3. 생성하고자 하는 리소스 선택 후, 필요 입력 요소들 입력 
+    4. Create  버튼 클릭 
+    5. 성공적으로 생성되었다면 토스트 알림과 함께 하단부에 request, response의 body 부분이 나타남  
+    6. 그렇지 않다면 하단부가 비어 있거나 에러 코드가 나타남 
         
-        ![스크린샷 2025-02-20 202130.png](images/6199568f-ee29-43d6-ab5e-a8f68c550d7b.png)
+        ![create_1.png](images/create_1.png)
         
-        ![스크린샷 2025-02-20 202303.png](images/7e89b5ce-3205-418b-996b-a8785aab7daa.png)
+        ![create_2.png](images/create_2.png)
         
 2. Retrieve Request
-    1. Click Retrieve Button
-    2. Fill editable attributes(Some are mandatory)
-    3. Click Retrieve Button
-    4. If it’s successfully retrieved the resource, response body will appear with data from server. 
-    5. If not, response body will appear nothing or error code.
+    1. 좌측 메뉴에서 retrieve 선택 
+    2. CSEBase 선택 
+    3. 조회하고자 하는 리소스 선택 후, 필요 입력 요소들 입력 
+    4. Retrieve 버튼 클릭 
+    5. 성공적으로 조회되었다면 토스트 알림과 함께 하단부에 request의 header와 response의 body 부분이 나타남
+    6. 그렇지 않다면 하단부가 비어 있거나 에러 코드가 나타남
         
-        ![스크린샷 2025-02-20 203748.png](images/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2025-02-20_203748.png)
+        ![retrieve_1.png](images/retrieve_1.png)
         
-        ![스크린샷 2025-02-20 203805.png](images/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2025-02-20_203805.png)
+        ![retrieve_2.png](images/retrieve_2.png)
         
 3. Update Request
-    1. Click Update Button
-    2. Fill editable attributes(Some are mandatory) + body
-    3. Click Update Button
-    4. If it’s successfully retrieved the resource, response body will appear message from server. 
-    5. If not, response body will appear nothing or error code.
+    1. 좌측 메뉴에서 Update 선택 
+    2. CSEBase 선택 
+    3. 변경하고자 하는 리소스 선택 후, 필요 입력 요소들 입력
+    4. Update 버튼 클릭 
+    5. 성공적으로 변경되었다면 토스트 알림과 함께 하단부에 request, response의 body 부분이 나타남
+    6. 그렇지 않다면 하단부가 비어 있거나 에러 코드가 나타남
         
-        ![스크린샷 2025-02-20 203924.png](images/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2025-02-20_203924.png)
+        ![update_1.png](images/update_1.png)
         
-        ![스크린샷 2025-02-20 203938.png](images/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2025-02-20_203938.png)
+        ![update_2.png](images/update_2.png)
         
 4. Delete Request
-    1. Click Delete Button
-    2. Fill editable attributes(Some are mandatory)
-    3. Click Delete Button
-    4. If it’s successfully retrieved the resource, response body will appear message from server. 
-    5. If not, response body will appear nothing or error code.
+    1. 좌측 메뉴에서 Delete 선택
+    2. CSEBase 선택 
+    3. 삭제하고자 하는 리소스 요소들 입력 
+    4. Delete 버튼 클릭 
+    5. 성공적으로 삭제되었다면 토스트 알림과 함께 하단부에 request의 헤더와 삭제 메시지가 나타남 
+    6. 그렇지 않다면 하단부가 비어 있거나 에러 코드가 나타남
         
-        ![스크린샷 2025-02-20 204019.png](images/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7_2025-02-20_204019.png)
+        ![delete_1.png](images/delete_1.png)
+        
+        ![delete_2.png](images/delete_2.png)
