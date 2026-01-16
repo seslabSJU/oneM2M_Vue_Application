@@ -10,7 +10,9 @@
         
     ```powershell
     # node.js 설치
-    $ nvm install v22.12.0
+    $ nvm install 22.12.0
+    # 22.12.0 설치된 것을 사용
+    $ nvm use 22.12.0 
     # node.js의 버전 확인
     $ node -v
     ```
