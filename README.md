@@ -12,7 +12,7 @@
     # node.js 설치
     $ nvm install v22.12.0
     # node.js의 버전 확인
-    $ node.js -v
+    $ node -v
     ```
         
 2. ‘**vue-project’** 디렉토리로 이동하여 코드를 실행 
